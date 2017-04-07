@@ -10,6 +10,6 @@ class Advisor
 	string department;
 	int advisorID;
 	int number;
-	vndonFO'W
+	
 	
 };
