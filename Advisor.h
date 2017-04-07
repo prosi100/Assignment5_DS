@@ -9,5 +9,6 @@ class Advisor
 	string level;
 	string department;
 	int advisorID;
+	int number;
 	
 };
