@@ -18,6 +18,7 @@ class Student
 		~Student();
 		Student(string theName, string theLevel, string theMajor, double theGpa, int theID, int theAdvisorID);
 		Student operator>(Student &myObj);
+		void printStudent();
 };
 
 Student::Student()
@@ -42,15 +43,20 @@ Student::Student(string theName, string theLevel, string theMajor, double theGpa
 	advisorID = theAdvisorID;
 }
 
-Student::operator>(Student &myObj)
+Student Student::operator>(Student &myObj)
 {
-	if (this.ID>myObj->ID)
+	if (this->ID>myObj.ID)
 	{
-		return this;
+		return *this;
 	}
 
 	else
 	{
 		return myObj;
 	}
+}
+
+void Student::printStudent()
+{
+	cout<<"Name: "<<name<<endl<<"Level: "<<level<<endl<<"Major: "<<major<<endl<<"GPA: "<<gpa<<endl<<"ID: "<<ID<<endl<<"Advisor ID: "<<advisorID<<endl;
 }

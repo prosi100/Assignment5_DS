@@ -2,5 +2,6 @@
 #include "Student.h"
 int main()
 {
-	Student myStudent;
+	Student myStudent ("Christine", "Junior", "Mathematics", 3.9, 1856076, 1234567);
+	myStudent.printStudent();
 }

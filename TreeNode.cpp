@@ -1,5 +1,5 @@
 #include <iostream>
-#include "BST.h"
+#include "TreeNode.h"
 
 using namespace std;
 
@@ -14,3 +14,4 @@ TreeNode::TreeNode(int k)
 	right = NULL;
 	key = k;
 }
+TreeNode::~TreeNode(){}

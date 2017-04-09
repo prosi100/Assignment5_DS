@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include "TreeNode.h"
 
 using namespace std;
 
@@ -10,35 +11,45 @@ class BST
 		BST();
 		~BST();
 
-		void insert(T value);
-		bool contains(int value);
+		void insert(int theKey, T theValue);
+		//bool contains(int value);
 		//bool deleteNode(int value);
 
 		bool isEmpty();
-		bool isFull();
-		int getMin(); //left most
-		int getMax(); //right most
+		//bool isFull();
+		//int getMin(); //left most
+		//int getMax(); //right most
 
 		//TreeNode* getSuccessor(TreeNode d); //helper function for delete method
-		//print functions
+		void printInOrder();
+		TreeNode getRoot();
 
 	private:
 		TreeNode* root;
 };
 
+template <typename T>
 BST::BST()
 {
 	root = NULL;
 }
 
+template <typename T>
 BST::~BST()
 {
 
 }
 
-void BST::insert(T value)//like a failed search. Could also make recursive.
+template <typename T>
+bool BST::isEmpty()
 {
-	/*TreeNode* node = new TreeNode(value);	
+	return root==NULL;
+}
+
+template <typename T>
+void BST::insert(int key, T value)//like a failed search. Could also make recursive.
+{
+	TreeNode* node = new TreeNode(theKey, theValue);	
 
 	if (root==NULL)//empty check
 	{
@@ -72,5 +83,22 @@ void BST::insert(T value)//like a failed search. Could also make recursive.
 				}
 			}
 		}
-	}*/
+	}
+}
+
+template <typename T>
+void BST::printInOrder(TreeNode n)
+{
+	if (n!=null)
+	{
+		printInOrder(n->left);
+		cout<<n->data<<endl;
+		printInOrder(n->right);
+	}
+}
+
+template <typename T>
+TreeNode BST::getRoot()
+{
+	return root;
 }
