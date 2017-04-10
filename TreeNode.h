@@ -8,6 +8,7 @@ class TreeNode
 	public:
 		TreeNode();
 		TreeNode(T theValue);
+		T getData();
 		virtual ~TreeNode(); //determines dynamic binding vs static binding 
 	private:
 		T value;
@@ -34,3 +35,9 @@ TreeNode<T>::TreeNode(T theValue)
 
 template <typename T>
 TreeNode<T>::~TreeNode(){}
+
+template <typename T>
+T TreeNode<T>::getData()
+{
+	return value;
+}

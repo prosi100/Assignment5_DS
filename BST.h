@@ -12,13 +12,12 @@ class BST
 		~BST();
 
 		void insert(T theValue);
-		//bool contains(int value);
+		bool contains(T someValue);
 		//bool deleteNode(int value);
 
 		bool isEmpty();
-		//bool isFull();
-		//int getMin(); //left most
-		//int getMax(); //right most
+		TreeNode<T>* getMax(); //right most
+		TreeNode<T>* getMin(); //left most
 
 		//TreeNode* getSuccessor(TreeNode d); //helper function for delete method
 		void printInOrder(TreeNode<T>* n);
@@ -44,6 +43,38 @@ template <typename T>
 bool BST<T>::isEmpty()
 {
 	return root==NULL;
+}
+
+template <typename T>
+TreeNode<T>* BST<T>::getMax()
+{
+	TreeNode<T>* current = root;
+	if (root==NULL)
+	{
+		return NULL;
+	}
+
+	while(current->right!=NULL)
+	{
+		current = current->right;
+	}
+
+	return current; 
+}
+
+template <typename T>
+TreeNode<T>* BST<T>::getMin()
+{
+	TreeNode<T>* current = root;
+	if (root==NULL)
+	{
+		return NULL;
+	}
+	while (current->left!=NULL)
+	{
+		current = current->left;
+	}
+	return current;
 }
 
 template <typename T>
@@ -84,6 +115,37 @@ void BST<T>::insert(T theValue)//like a failed search. Could also make recursive
 			}
 		}
 	}
+}
+
+template <typename T>
+bool BST<T>::contains(T someValue)
+{		
+	if (root==NULL)
+	{
+		return false;
+	}
+
+	else
+	{
+		TreeNode<T>* current = root;//start at the root
+		while(current->value!=someValue)
+		{
+			if(someValue<current->value)//go left
+			{
+				current = current->left;
+			}
+			else
+			{
+				current = current->right;
+			}
+
+			if(current==NULL)
+			{
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
 template <typename T>
