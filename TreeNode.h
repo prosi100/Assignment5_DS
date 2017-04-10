@@ -7,28 +7,30 @@ class TreeNode
 {
 	public:
 		TreeNode();
-		TreeNode(int k);
+		TreeNode(T theValue);
 		virtual ~TreeNode(); //determines dynamic binding vs static binding 
-	private: 
-		int key;
+	private:
 		T value;
 		TreeNode *left;
 		TreeNode *right;
 		template <class U> friend class BST;
 };
 
-TreeNode::TreeNode()
+template <typename T>
+TreeNode<T>::TreeNode()
 {
 	left = NULL;
 	right = NULL;
-	key = 0;
-	T = NULL;
+	value = NULL;
 }
-TreeNode::TreeNode(int theKey, T theValue)
+
+template <typename T>
+TreeNode<T>::TreeNode(T theValue)
 {
 	left = NULL;
 	right = NULL;
-	key = k;
-	T = theValue;
+	value = theValue;
 }
-TreeNode::~TreeNode(){}
+
+template <typename T>
+TreeNode<T>::~TreeNode(){}

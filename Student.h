@@ -17,8 +17,15 @@ class Student
 		Student();
 		~Student();
 		Student(string theName, string theLevel, string theMajor, double theGpa, int theID, int theAdvisorID);
-		Student operator>(Student &myObj);
-		void printStudent();
+		string getName()const;
+		string getLevel()const;
+		string getMajor()const;
+		double getGPA()const;
+		int getID()const;
+		int getAdvisorID()const;
+		bool operator>(Student &myObj);
+		bool operator<(Student &myObj);
+		friend ostream& operator<<(ostream& os, const Student& obj);
 };
 
 Student::Student()
@@ -43,20 +50,63 @@ Student::Student(string theName, string theLevel, string theMajor, double theGpa
 	advisorID = theAdvisorID;
 }
 
-Student Student::operator>(Student &myObj)
+string Student::getName() const
+{
+	return name;
+}
+
+string Student::getLevel() const
+{
+	return level;
+}
+
+string Student::getMajor() const
+{
+	return major;
+}
+
+double Student::getGPA() const
+{
+	return gpa;
+}
+
+int Student::getID() const
+{
+	return ID;
+}
+int Student::getAdvisorID() const
+{
+	return advisorID;
+}
+
+bool Student::operator>(Student &myObj)
 {
 	if (this->ID>myObj.ID)
 	{
-		return *this;
+		return true;
 	}
 
 	else
 	{
-		return myObj;
+		return false;
 	}
 }
 
-void Student::printStudent()
+bool Student::operator<(Student &myObj)
 {
-	cout<<"Name: "<<name<<endl<<"Level: "<<level<<endl<<"Major: "<<major<<endl<<"GPA: "<<gpa<<endl<<"ID: "<<ID<<endl<<"Advisor ID: "<<advisorID<<endl;
+	if (this->ID<myObj.ID)
+	{
+		return true;
+	}
+
+	else
+	{
+		return false;
+	}
+}
+
+ostream& operator<<(ostream& os, const Student& obj)
+{
+   os<<"Name: "<<obj.getName()<<endl<<"Level: "<<obj.getLevel()<<endl<<"Major: "<<obj.getMajor()<<endl<<"GPA: "<<obj.getGPA()<<endl<<"ID: "<<obj.getID()<<endl<<"Advisor ID: "<<obj.getAdvisorID()<<endl;
+   return os;
 }

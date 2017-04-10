@@ -11,7 +11,7 @@ class BST
 		BST();
 		~BST();
 
-		void insert(int theKey, T theValue);
+		void insert(T theValue);
 		//bool contains(int value);
 		//bool deleteNode(int value);
 
@@ -21,35 +21,35 @@ class BST
 		//int getMax(); //right most
 
 		//TreeNode* getSuccessor(TreeNode d); //helper function for delete method
-		void printInOrder();
-		TreeNode getRoot();
+		void printInOrder(TreeNode<T>* n);
+		TreeNode<T>* getRoot();
 
 	private:
-		TreeNode* root;
+		TreeNode<T>* root;
 };
 
 template <typename T>
-BST::BST()
+BST<T>::BST()
 {
 	root = NULL;
 }
 
 template <typename T>
-BST::~BST()
+BST<T>::~BST()
 {
 
 }
 
 template <typename T>
-bool BST::isEmpty()
+bool BST<T>::isEmpty()
 {
 	return root==NULL;
 }
 
 template <typename T>
-void BST::insert(int key, T value)//like a failed search. Could also make recursive.
+void BST<T>::insert(T theValue)//like a failed search. Could also make recursive.
 {
-	TreeNode* node = new TreeNode(theKey, theValue);	
+	TreeNode<T>* node = new TreeNode<T>(theValue);	
 
 	if (root==NULL)//empty check
 	{
@@ -58,13 +58,13 @@ void BST::insert(int key, T value)//like a failed search. Could also make recurs
 
 	else
 	{
-		TreeNode* current = root; //start at the root
-		TreeNode* parent; //empty node for now, but will be there so that we can set our pointers accordingly
+		TreeNode<T>* current = root; //start at the root
+		TreeNode<T>* parent; //empty node for now, but will be there so that we can set our pointers accordingly
 		while(true)//add break point
 		{
 			parent = current;
 
-			if (value < current->key)//here key is value; go left
+			if (theValue < current->value)//here key is value; go left
 			{
 				current = current->left;
 				if (current == NULL)//found our position
@@ -87,18 +87,18 @@ void BST::insert(int key, T value)//like a failed search. Could also make recurs
 }
 
 template <typename T>
-void BST::printInOrder(TreeNode n)
+void BST<T>::printInOrder(TreeNode<T>* n)
 {
-	if (n!=null)
+	if (n!=NULL)
 	{
 		printInOrder(n->left);
-		cout<<n->data<<endl;
+		cout<<n->value<<endl;
 		printInOrder(n->right);
 	}
 }
 
 template <typename T>
-TreeNode BST::getRoot()
+TreeNode<T>* BST<T>::getRoot()
 {
 	return root;
 }
