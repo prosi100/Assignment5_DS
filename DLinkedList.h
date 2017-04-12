@@ -3,6 +3,7 @@
 #include "ListNode.h"
 #include <stdexcept>
 #include <cstdio>
+#include <sstream>
 
 using namespace std;
 
@@ -14,6 +15,7 @@ class DLinkedList{
 		ListNode<T> *back;
 		int size;
 		template <class U> friend class GenQueue;
+		friend class Advisor;
 
 	public:
 		DLinkedList();
@@ -21,12 +23,15 @@ class DLinkedList{
 		bool isEmpty() const;
 		void insertFront(const T& d);
 		void insertBack (const T& d);
+		string convertToString(T theValue) const;
+		string listToString()const;
 		void printList();
 		int getSize();
 		T getFront() const;
 		T getBack() const;
 		T removeFront();
 		T removeBack();
+		T removeNode(T theNode);
 		T smallestValue();
 		T largestValue();
 		int positionOfValue(T value);
@@ -34,6 +39,7 @@ class DLinkedList{
 		void setDataAtPosition(int pos, T newData);
 		void sortedInsert(T newData);
 		T sumList();
+		//friend ostream& operator<<(ostream& os, const DLinkedList& obj);
 };
 
 template <typename T>
@@ -155,6 +161,38 @@ T DLinkedList<T>::removeBack()
 	temp->next = NULL;
 	delete temp;
 	return tempData;		
+}
+
+template <typename T>
+T DLinkedList<T>::removeNode(T theNode)
+{
+	ListNode<T> *temp = front;
+	int count = 0;	
+	while(temp->next!=back)
+	{	
+		if(temp->data==theNode)
+		{
+			break;
+		}	
+		temp = temp->next;		
+	}	
+
+	if(temp==front->next)
+	{
+		removeFront();
+	}
+	else if(temp==back->prev)
+	{
+		removeBack();
+	}
+	else
+	{
+		temp->next->prev = temp->prev;
+		temp->prev->next = temp->next;
+		temp->prev=NULL;
+		temp->next=NULL;
+	}
+	return temp->data;
 }
 
 template <typename T>
@@ -301,5 +339,26 @@ T DLinkedList<T>::sumList()
 		temp = temp->next;		
 	}	
 	return sum;
+}
+
+template <typename T>
+string DLinkedList<T>::convertToString(T theValue) const
+{
+   stringstream ss;//create a stringstream
+   ss << theValue;//add number to the stream
+   return ss.str();//return a string with the contents of the stream
+}
+
+template <typename T>
+string DLinkedList<T>::listToString() const
+{
+	string myString = "";
+	ListNode<int> *temp = front;	
+	while(temp->next!=back)
+	{
+		myString +=convertToString(temp->next->data)+" ";
+		temp = temp->next;		
+	}	
+	return myString;
 }
 
