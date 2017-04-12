@@ -1,153 +1,729 @@
 #include <iostream>
 #include <string>
-#include "DLinkedList.h"
+#include "ListNode.h"
+#include <stdexcept>
+#include <cstdio>
+#include <sstream>
+
 using namespace std;
 
-class Advisor
-{
-private:
-	string name;
-	string level;
-	string department;
-	int ID;
-	DLinkedList<int> studentList;
+template <class T>
+class DLinkedList{
 
-public:
-	Advisor();
-	~Advisor();
-	Advisor(string theName, string theLevel, string theDepartment, int theID);
-	Advisor(int theID);
-	void addStudent(int studentID);
-	void removeStudent(int studentID);
-	string getName()const;
-	string getLevel()const;
-	string getDepartment()const;	
-	string studentListToString()const;
-	int getID()const;
-	DLinkedList<int>* getStudentList();
-	void printStudentList();
-	bool operator>(Advisor &myObj);
-	bool operator<(Advisor &myObj);
-	bool operator==(Advisor &myObj);
-	bool operator!=(Advisor &myObj);
-	friend ostream& operator<<(ostream& os, const Advisor& obj);	
+	private:
+		ListNode<T> *front;
+		ListNode<T> *back;
+		int size;
+		template <class U> friend class GenQueue;
+		friend class Advisor;
+
+	public:
+		DLinkedList();
+		~DLinkedList();
+		bool isEmpty() const;
+		void insertFront(const T& d);
+		void insertBack (const T& d);
+		string convertToString(T theValue) const;
+		string listToString()const;
+		void printList();
+		int getSize();
+		T getFront() const;
+		T getBack() const;
+		T removeFront();
+		T removeBack();
+		T removeNode(T theNode);
+		T smallestValue();
+		T largestValue();
+		int positionOfValue(T value);
+		T getDataAtPosition(int pos);
+		void setDataAtPosition(int pos, T newData);
+		void sortedInsert(T newData);
+		T sumList();
+		//friend ostream& operator<<(ostream& os, const DLinkedList& obj);
 };
 
-Advisor::Advisor()
+template <typename T>
+DLinkedList<T>::DLinkedList()
 {
-	name = "";
-	level = "";
-	department = "";
-	ID = 0;
-	DLinkedList<int> studentList;
+	size =0;
+	front = new ListNode<T>();
+	back = new ListNode<T>();
+	front->next = back;
+	back->prev = front;
 }
 
-Advisor::Advisor(string theName, string theLevel, string theDepartment, int theID)
+template <typename T>
+DLinkedList<T>::~DLinkedList()
 {
-	name = theName;
-	level = theLevel;
-	department = theDepartment;
-	ID = theID;
-	DLinkedList<int> studentList;
-}
-
-Advisor::Advisor(int theID)
-{
-	ID = theID;
-}
-
-Advisor::~Advisor()
-{
-
-}
-
-void Advisor::addStudent(int studentID)
-{
-	studentList.insertBack(studentID);
-}
-
-void Advisor::removeStudent(int studentID)
-{
-
-}
-
-void Advisor::printStudentList()
-{
-	studentList.printList();
-}
-
-string Advisor::getName() const
-{
-	return name;
-}
-
-string Advisor::getLevel() const
-{
-	return level;
-}
-
-string Advisor::getDepartment() const
-{
-	return department;
-}
-
-int Advisor::getID() const
-{
-	return ID;
-}
-
-DLinkedList<int>* Advisor::getStudentList() 
-{
-	return &studentList;
-}
-
-bool Advisor::operator>(Advisor &myObj)
-{
-	if (this->ID>myObj.ID)
+	while(!isEmpty())
 	{
-		return true;
+		removeFront();
 	}
+	delete front;
+	delete back;
+}
 
+template <typename T>
+int DLinkedList<T>::getSize()
+{
+	return size;
+}
+
+template <typename T>
+bool DLinkedList<T>::isEmpty() const
+{
+	return (front->next==back);
+}
+
+template <typename T>
+void DLinkedList<T>::insertFront(const T& d)
+{
+	++size;	
+	ListNode<T> *node = new ListNode<T>(d);
+	
+	if (size==1)
+	{		
+		back->prev = node;
+		node->next = back;		
+	}
 	else
 	{
-		return false;
+		node->next = front->next;
+		front->next->prev = node;
 	}
+	node->prev = front;
+	front->next = node;	
 }
 
-bool Advisor::operator<(Advisor &myObj)
+template <typename T>
+void DLinkedList<T>::insertBack (const T& d)
 {
-	if (this->ID<myObj.ID)
+	++size;
+	ListNode<T> *node = new ListNode<T>(d);
+	if (size ==1)
 	{
-		return true;
+		front->next=node;
+		node->prev = front;
 	}
-
 	else
 	{
-		return false;
+		node->prev = back->prev;
+		back->prev->next = node;
+	}
+	node->next = back;
+	back->prev = node;
+}
+
+template <typename T>
+T DLinkedList<T>::getFront() const
+{
+	return front->next->data;
+}
+
+template <typename T>
+T DLinkedList<T>::getBack() const
+{
+	return back->prev->data;
+}
+	
+template <typename T>
+T DLinkedList<T>::removeFront()
+{
+	if(size==0)
+	{
+		throw std::invalid_argument("Cannot remove from empty queue");
+	}
+	--size;
+	ListNode<T> *temp = front->next;
+	T tempData = temp->data;
+	temp->next->prev = front;
+	front->next = temp->next;
+	temp->next=NULL;
+	temp->prev = NULL;
+	delete temp;
+	return tempData;
+	
+}
+		
+template <typename T>
+T DLinkedList<T>::removeBack() 
+{
+	if(size==0)
+	{
+		throw std::invalid_argument("Cannot remove from empty queue");
+	}
+	--size;
+	ListNode<T> *temp = back->prev;
+	T tempData = temp->data;
+	temp->prev->next = back;
+	back->prev = temp->prev;
+	temp->prev=NULL;
+	temp->next = NULL;
+	delete temp;
+	return tempData;		
+}
+
+template <typename T>
+T DLinkedList<T>::removeNode(T theNode)
+{
+	ListNode<T> *temp = front;
+	int count = 0;	
+	while(temp->next!=back)
+	{	
+		if(temp->data==theNode)
+		{
+			break;
+		}	
+		temp = temp->next;		
+	}	
+
+	if(temp==front->next)
+	{
+		removeFront();
+	}
+	else if(temp==back->prev)
+	{
+		removeBack();
+	}
+	else
+	{
+		temp->next->prev = temp->prev;
+		temp->prev->next = temp->next;
+		temp->prev=NULL;
+		temp->next=NULL;
+	}
+	return temp->data;
+}
+
+template <typename T>
+void DLinkedList<T>::printList()
+{
+	ListNode<T> *temp = front;	
+	while(temp->next!=back)
+	{
+		cout<<temp->next->data<<" ";
+		temp = temp->next;		
+	}	
+	cout<<endl;
+}
+
+template <typename T>
+T DLinkedList<T>::smallestValue()
+{
+	ListNode<T> *temp = front;
+	T theData = temp->next->data;	
+	while(temp->next!=back)
+	{
+		if(temp->next->data<theData)
+		{
+			theData = temp->next->data;
+		}
+		temp = temp->next;		
+	}	
+	return theData;
+}
+
+template <typename T>
+T DLinkedList<T>::largestValue()
+{
+	ListNode<T> *temp = front;
+	T theData = temp->next->data;
+	while(temp->next!=back)
+	{
+		if(temp->next->data>theData)
+		{
+			theData = temp->next->data;
+		}
+		temp = temp->next;
+	}
+	return theData;
+}
+
+template <typename T>
+int DLinkedList<T>::positionOfValue(T value)//0 onward
+{
+	ListNode<T> *temp = front;
+	int count = 0;	
+	while(temp->next!=back)
+	{
+		if(temp->next->data==value)
+		{
+			return count;
+		}
+		count++;
+		temp = temp->next;		
+	}	
+	return -1;	
+}
+
+template <typename T>
+T DLinkedList<T>::getDataAtPosition(int pos)
+{
+	if (pos>size-1)
+	{
+		//throw error
+	}
+	ListNode<T> *temp = front;
+	int count = 0;
+	while(count<pos)
+	{
+		temp=temp->next;
+		count++;
+	}
+	return temp->next->data;
+}
+
+template <typename T>
+void DLinkedList<T>::setDataAtPosition(int pos, T newData)
+{
+	if (pos>size-1)
+	{
+		//throw error
+	}
+	ListNode<T> *temp = front;
+	int count = 0;
+	while (count<pos)
+	{
+		temp = temp->next;
+		count++;
+	}
+	temp->next->data = newData;
+}
+
+template <typename T>
+void DLinkedList<T>::sortedInsert(T newData)
+{
+	if(size==0)
+	{
+		ListNode<T> *b = new ListNode<T>(newData);
+		front->next = b;
+		b->prev = front;
+		b->next = back;
+		back->prev = b; 
+		++size;
+	}
+	else
+	{
+		ListNode<T> *a = front;
+		while(a->next!=back)
+		{
+			if (newData>a->next->data)
+			{
+				a = a->next;
+			}
+			else
+			{
+				break;
+			}
+		}	
+
+		ListNode<T> *c = a->next;
+		ListNode<T> *b= new ListNode<T>(newData);
+
+		a->next = b;
+		b->prev = a;
+		b->next = c;
+		c->prev = b;
+		++size;
 	}
 }
 
-bool Advisor::operator==(Advisor &myObj)
+template <typename T>
+T DLinkedList<T>::sumList()
 {
-	return this->ID ==myObj.ID;
+	T sum;
+	ListNode<T> *temp = front;	
+	while(temp->next!=back)
+	{
+		sum +=temp->next->data;
+		temp = temp->next;		
+	}	
+	return sum;
 }
 
-bool Advisor::operator!=(Advisor &myObj)
+template <typename T>
+string DLinkedList<T>::convertToString(T theValue) const
 {
-	return this->ID!=myObj.ID;
+   stringstream ss;//create a stringstream
+   ss << theValue;//add number to the stream
+   return ss.str();//return a string with the contents of the stream
 }
 
-string Advisor::studentListToString() const
+template <typename T>
+string DLinkedList<T>::listToString() const
 {
-	return studentList.listToString();
+	string myString = "";
+	ListNode<int> *temp = front;	
+	while(temp->next!=back)
+	{
+		myString +=convertToString(temp->next->data)+" ";
+		temp = temp->next;		
+	}	
+	return myString;
 }
 
-ostream& operator<<(ostream& os, const Advisor& obj)
+#include <iostream>
+#include <string>
+#include "ListNode.h"
+#include <stdexcept>
+#include <cstdio>
+#include <sstream>
+
+using namespace std;
+
+template <class T>
+class DLinkedList{
+
+	private:
+		ListNode<T> *front;
+		ListNode<T> *back;
+		int size;
+		template <class U> friend class GenQueue;
+		friend class Advisor;
+
+	public:
+		DLinkedList();
+		~DLinkedList();
+		bool isEmpty() const;
+		void insertFront(const T& d);
+		void insertBack (const T& d);
+		string convertToString(T theValue) const;
+		string listToString()const;
+		void printList();
+		int getSize();
+		T getFront() const;
+		T getBack() const;
+		T removeFront();
+		T removeBack();
+		T removeNode(T theNode);
+		T smallestValue();
+		T largestValue();
+		int positionOfValue(T value);
+		T getDataAtPosition(int pos);
+		void setDataAtPosition(int pos, T newData);
+		void sortedInsert(T newData);
+		T sumList();
+		//friend ostream& operator<<(ostream& os, const DLinkedList& obj);
+};
+
+template <typename T>
+DLinkedList<T>::DLinkedList()
 {
-   os<<endl<<"Name: "<<obj.getName()<<endl<<"Level: "<<obj.getLevel()<<endl<<"Department: "<<obj.getDepartment()<<endl<<"ID: "<<obj.getID()<<endl<<"List of Students: "<<obj.studentListToString()<<endl;
-   return os;
+	size =0;
+	front = new ListNode<T>();
+	back = new ListNode<T>();
+	front->next = back;
+	back->prev = front;
 }
 
+template <typename T>
+DLinkedList<T>::~DLinkedList()
+{
+	while(!isEmpty())
+	{
+		removeFront();
+	}
+	delete front;
+	delete back;
+}
 
+template <typename T>
+int DLinkedList<T>::getSize()
+{
+	return size;
+}
 
+template <typename T>
+bool DLinkedList<T>::isEmpty() const
+{
+	return (front->next==back);
+}
 
+template <typename T>
+void DLinkedList<T>::insertFront(const T& d)
+{
+	++size;	
+	ListNode<T> *node = new ListNode<T>(d);
+	
+	if (size==1)
+	{		
+		back->prev = node;
+		node->next = back;		
+	}
+	else
+	{
+		node->next = front->next;
+		front->next->prev = node;
+	}
+	node->prev = front;
+	front->next = node;	
+}
+
+template <typename T>
+void DLinkedList<T>::insertBack (const T& d)
+{
+	++size;
+	ListNode<T> *node = new ListNode<T>(d);
+	if (size ==1)
+	{
+		front->next=node;
+		node->prev = front;
+	}
+	else
+	{
+		node->prev = back->prev;
+		back->prev->next = node;
+	}
+	node->next = back;
+	back->prev = node;
+}
+
+template <typename T>
+T DLinkedList<T>::getFront() const
+{
+	return front->next->data;
+}
+
+template <typename T>
+T DLinkedList<T>::getBack() const
+{
+	return back->prev->data;
+}
+	
+template <typename T>
+T DLinkedList<T>::removeFront()
+{
+	if(size==0)
+	{
+		throw std::invalid_argument("Cannot remove from empty queue");
+	}
+	--size;
+	ListNode<T> *temp = front->next;
+	T tempData = temp->data;
+	temp->next->prev = front;
+	front->next = temp->next;
+	temp->next=NULL;
+	temp->prev = NULL;
+	delete temp;
+	return tempData;
+	
+}
+		
+template <typename T>
+T DLinkedList<T>::removeBack() 
+{
+	if(size==0)
+	{
+		throw std::invalid_argument("Cannot remove from empty queue");
+	}
+	--size;
+	ListNode<T> *temp = back->prev;
+	T tempData = temp->data;
+	temp->prev->next = back;
+	back->prev = temp->prev;
+	temp->prev=NULL;
+	temp->next = NULL;
+	delete temp;
+	return tempData;		
+}
+
+template <typename T>
+T DLinkedList<T>::removeNode(T theNode)
+{
+	ListNode<T> *temp = front;
+	int count = 0;	
+	while(temp->next!=back)
+	{	
+		if(temp->data==theNode)
+		{
+			break;
+		}	
+		temp = temp->next;		
+	}	
+
+	if(temp==front->next)
+	{
+		removeFront();
+	}
+	else if(temp==back->prev)
+	{
+		removeBack();
+	}
+	else
+	{
+		temp->next->prev = temp->prev;
+		temp->prev->next = temp->next;
+		temp->prev=NULL;
+		temp->next=NULL;
+	}
+	return temp->data;
+}
+
+template <typename T>
+void DLinkedList<T>::printList()
+{
+	ListNode<T> *temp = front;	
+	while(temp->next!=back)
+	{
+		cout<<temp->next->data<<" ";
+		temp = temp->next;		
+	}	
+	cout<<endl;
+}
+
+template <typename T>
+T DLinkedList<T>::smallestValue()
+{
+	ListNode<T> *temp = front;
+	T theData = temp->next->data;	
+	while(temp->next!=back)
+	{
+		if(temp->next->data<theData)
+		{
+			theData = temp->next->data;
+		}
+		temp = temp->next;		
+	}	
+	return theData;
+}
+
+template <typename T>
+T DLinkedList<T>::largestValue()
+{
+	ListNode<T> *temp = front;
+	T theData = temp->next->data;
+	while(temp->next!=back)
+	{
+		if(temp->next->data>theData)
+		{
+			theData = temp->next->data;
+		}
+		temp = temp->next;
+	}
+	return theData;
+}
+
+template <typename T>
+int DLinkedList<T>::positionOfValue(T value)//0 onward
+{
+	ListNode<T> *temp = front;
+	int count = 0;	
+	while(temp->next!=back)
+	{
+		if(temp->next->data==value)
+		{
+			return count;
+		}
+		count++;
+		temp = temp->next;		
+	}	
+	return -1;	
+}
+
+template <typename T>
+T DLinkedList<T>::getDataAtPosition(int pos)
+{
+	if (pos>size-1)
+	{
+		//throw error
+	}
+	ListNode<T> *temp = front;
+	int count = 0;
+	while(count<pos)
+	{
+		temp=temp->next;
+		count++;
+	}
+	return temp->next->data;
+}
+
+template <typename T>
+void DLinkedList<T>::setDataAtPosition(int pos, T newData)
+{
+	if (pos>size-1)
+	{
+		//throw error
+	}
+	ListNode<T> *temp = front;
+	int count = 0;
+	while (count<pos)
+	{
+		temp = temp->next;
+		count++;
+	}
+	temp->next->data = newData;
+}
+
+template <typename T>
+void DLinkedList<T>::sortedInsert(T newData)
+{
+	if(size==0)
+	{
+		ListNode<T> *b = new ListNode<T>(newData);
+		front->next = b;
+		b->prev = front;
+		b->next = back;
+		back->prev = b; 
+		++size;
+	}
+	else
+	{
+		ListNode<T> *a = front;
+		while(a->next!=back)
+		{
+			if (newData>a->next->data)
+			{
+				a = a->next;
+			}
+			else
+			{
+				break;
+			}
+		}	
+
+		ListNode<T> *c = a->next;
+		ListNode<T> *b= new ListNode<T>(newData);
+
+		a->next = b;
+		b->prev = a;
+		b->next = c;
+		c->prev = b;
+		++size;
+	}
+}
+
+template <typename T>
+T DLinkedList<T>::sumList()
+{
+	T sum;
+	ListNode<T> *temp = front;	
+	while(temp->next!=back)
+	{
+		sum +=temp->next->data;
+		temp = temp->next;		
+	}	
+	return sum;
+}
+
+template <typename T>
+string DLinkedList<T>::convertToString(T theValue) const
+{
+   stringstream ss;//create a stringstream
+   ss << theValue;//add number to the stream
+   return ss.str();//return a string with the contents of the stream
+}
+
+template <typename T>
+string DLinkedList<T>::listToString() const
+{
+	string myString = "";
+	ListNode<int> *temp = front;	
+	while(temp->next!=back)
+	{
+		myString +=convertToString(temp->next->data)+" ";
+		temp = temp->next;		
+	}	
+	return myString;
+}
+
+v
