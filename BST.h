@@ -13,13 +13,13 @@ class BST
 
 		void insert(T theValue);
 		bool contains(T someValue);
-		//bool deleteNode(int value);
+		bool deleteNode(TreeNode<T> someNode);
 
 		bool isEmpty();
 		TreeNode<T>* getMax(); //right most
 		TreeNode<T>* getMin(); //left most
 
-		//TreeNode* getSuccessor(TreeNode d); //helper function for delete method
+		TreeNode<T>* getSuccessor(TreeNode<T> d); //helper function for delete method
 		void printInOrder(TreeNode<T>* n);
 		TreeNode<T>* getRoot();
 
@@ -163,4 +163,136 @@ template <typename T>
 TreeNode<T>* BST<T>::getRoot()
 {
 	return root;
+}
+
+template <typename T>
+TreeNode<T>* BST<T>::getSuccessor(TreeNode<T> d)//pass in node we're trying to delete
+{
+	TreeNode<T>* sp = &d;///successor's parent
+	TreeNode<T>* successor = &d;//will be one right, all the way left
+	TreeNode<T>* current = d.right;
+
+	while(current!=NULL)	
+	{
+		sp = successor;
+		successor = current;
+		current = current->left;
+	}
+
+	if(successor!=d.right)//if it isn't immediately to the right
+	{
+		sp->left = successor->right;
+		successor->right = d.right;
+	}
+
+	return successor;
+}
+
+template <typename T>
+bool BST<T>::deleteNode(TreeNode<T> someNode)//could return something else
+{
+	if (root==NULL)//empty tree
+	{
+		return false;
+	}
+
+	TreeNode<T> *current = root;//always start at root
+	TreeNode<T> *parent = NULL;
+	bool isLeft = true;
+
+	while(current->value!=someNode.value)
+	{
+		parent = current;
+		if(someNode.value<current->value)
+		{
+			isLeft = true;
+			current = current->left;
+		}
+		else
+		{
+			isLeft = false;
+			current = current->right;
+		}
+
+		if(current==NULL)
+		{
+			cout<<"Value not found"<<endl;
+			return false;
+		}
+
+	}
+	//yay we found what needs to be deleted.
+
+	if(current->left == NULL && current->right == NULL)//no children, leaf node
+	{
+		if(current == root)
+		{
+			root = NULL;
+		}
+
+		else if(isLeft==true)
+		{
+			parent->left = NULL;//deleted the node in question
+		}
+		else
+		{
+			parent->right = NULL;//deleted the node in question
+		}
+	}
+
+	else if(current->right==NULL)//has one child (the left child)
+	{
+		if(current==root)
+		{
+			root = current->left;
+		}
+		else if(isLeft == true)
+		{
+			parent->left = current->left;
+		}
+		else
+		{
+			parent->right = current->left;
+		}
+	}
+
+	else if (current->left ==NULL)//has one child (the right child)
+	{
+		if(current==root)
+		{
+			root = current->right;
+		}
+		else if (isLeft==true)
+		{
+			parent->left = current->right;
+		}
+		else
+		{
+			parent->right = current->right;
+		}
+	}
+
+	else//two children!!!
+	{
+		TreeNode<T>* successor = getSuccessor(*current);
+
+		if(current==root)	
+		{
+			root = successor;
+		}
+		else if (isLeft)//checks if it is the left of the immediate parent
+		{
+			parent->left = successor;	
+		}
+		else
+		{
+			parent->right = successor;
+		}
+		successor->left = current->left;
+	}
+	current->left =NULL;
+	current->right=NULL;
+
+	return true;
+
 }
