@@ -18,11 +18,14 @@ public:
 	Advisor(string theName, string theLevel, string theDepartment, int theID);
 	Advisor(int theID);
 	void addStudent(int studentID);
+	void removeStudent(int studentID);
 	string getName()const;
 	string getLevel()const;
 	string getDepartment()const;	
+	string studentListToString()const;
 	int getID()const;
-	DLinkedList<int>* getStudentList()const;
+	DLinkedList<int>* getStudentList();
+	void printStudentList();
 	bool operator>(Advisor &myObj);
 	bool operator<(Advisor &myObj);
 	bool operator==(Advisor &myObj);
@@ -48,7 +51,7 @@ Advisor::Advisor(string theName, string theLevel, string theDepartment, int theI
 	DLinkedList<int> studentList;
 }
 
-Advisor::Advisor(int ID)
+Advisor::Advisor(int theID)
 {
 	ID = theID;
 }
@@ -58,9 +61,19 @@ Advisor::~Advisor()
 
 }
 
-void addStudent(int studentID)
+void Advisor::addStudent(int studentID)
 {
 	studentList.insertBack(studentID);
+}
+
+void Advisor::removeStudent(int studentID)
+{
+
+}
+
+void Advisor::printStudentList()
+{
+	studentList.printList();
 }
 
 string Advisor::getName() const
@@ -83,7 +96,7 @@ int Advisor::getID() const
 	return ID;
 }
 
-DLinkedList<int>* Advisor::getStudentList()
+DLinkedList<int>* Advisor::getStudentList() 
 {
 	return &studentList;
 }
@@ -124,11 +137,17 @@ bool Advisor::operator!=(Advisor &myObj)
 	return this->ID!=myObj.ID;
 }
 
-ostream& operator<<(ostream& os, const Student& obj)
+string Advisor::studentListToString() const
 {
-   os<<endl<<"Name: "<<obj.getName()<<endl<<"Level: "<<obj.getLevel()<<endl<<"Department: "<<obj.getDepartment()<<endl<<"ID: "<<obj.getID()<<endl<<"List of Students: "<<obj.();
+	return studentList.listToString();
+}
+
+ostream& operator<<(ostream& os, const Advisor& obj)
+{
+   os<<endl<<"Name: "<<obj.getName()<<endl<<"Level: "<<obj.getLevel()<<endl<<"Department: "<<obj.getDepartment()<<endl<<"ID: "<<obj.getID()<<endl<<"List of Students: "<<obj.studentListToString()<<endl;
    return os;
 }
+
 
 
 
