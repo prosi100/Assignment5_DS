@@ -10,7 +10,7 @@ private:
 	string level;
 	string department;
 	int ID;
-	DLinkedList<int> studentList;
+	//DLinkedList<int> studentList;
 
 public:
 	Advisor();
@@ -48,12 +48,16 @@ Advisor::Advisor(string theName, string theLevel, string theDepartment, int theI
 	level = theLevel;
 	department = theDepartment;
 	ID = theID;
-	DLinkedList<int> studentList;
+	//DLinkedList<int> studentList;
 }
 
 Advisor::Advisor(int theID)
 {
+	name = "";
+	level ="";
+	department="";
 	ID = theID;
+	//DLinkedList<int> studentList;
 }
 
 Advisor::~Advisor()
@@ -63,7 +67,7 @@ Advisor::~Advisor()
 
 void Advisor::addStudent(int studentID)
 {
-	studentList.insertBack(studentID);
+	//studentList.insertBack(studentID);
 }
 
 void Advisor::removeStudent(int studentID)
@@ -73,7 +77,7 @@ void Advisor::removeStudent(int studentID)
 
 void Advisor::printStudentList()
 {
-	studentList.printList();
+	//studentList.printList();
 }
 
 string Advisor::getName() const
@@ -98,7 +102,7 @@ int Advisor::getID() const
 
 DLinkedList<int>* Advisor::getStudentList() 
 {
-	return &studentList;
+	//return &studentList;
 }
 
 bool Advisor::operator>(Advisor &myObj)
@@ -139,7 +143,7 @@ bool Advisor::operator!=(Advisor &myObj)
 
 string Advisor::studentListToString() const
 {
-	return studentList.listToString();
+	//return studentList.listToString();
 }
 
 ostream& operator<<(ostream& os, const Advisor& obj)
