@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "TreeNode.h"
+#include <stdexcept>
 
 using namespace std;
 
@@ -14,10 +15,12 @@ class BST
 		void insert(T theValue);
 		bool contains(T someValue);
 		bool deleteNode(TreeNode<T> someNode);
+		void insertDataAtNode(T newData, T oldLocation);
 
 		bool isEmpty();
 		TreeNode<T>* getMax(); //right most
 		TreeNode<T>* getMin(); //left most
+		T getNode(T someValue);//get the entire value at a node
 
 		TreeNode<T>* getSuccessor(TreeNode<T> d); //helper function for delete method
 		void printInOrder(TreeNode<T>* n);
@@ -75,6 +78,68 @@ TreeNode<T>* BST<T>::getMin()
 		current = current->left;
 	}
 	return current;
+}
+
+template <typename T>
+T BST<T>::getNode(T someValue)
+{
+	if (root==NULL)
+	{
+		throw std::invalid_argument("This value is not in the tree");
+	}
+
+	else
+	{
+		TreeNode<T>* current = root;//start at the root
+		while(current->value!=someValue)
+		{
+			if(someValue<current->value)//go left
+			{
+				current = current->left;
+			}
+			else
+			{
+				current = current->right;
+			}
+
+			if(current==NULL)
+			{
+				throw std::invalid_argument("This value is not in the tree");
+			}
+		}
+		return current->value;
+	}
+}
+
+template <typename T>
+void BST<T>::insertDataAtNode(T newData, T oldLocation)
+{
+	if (root==NULL)
+	{
+		throw std::invalid_argument("This value is not in the tree");
+	}
+
+	else
+	{
+		TreeNode<T>* current = root;//start at the root
+		while(current->value!=oldLocation)
+		{
+			if(oldLocation<current->value)//go left
+			{
+				current = current->left;
+			}
+			else
+			{
+				current = current->right;
+			}
+
+			if(current==NULL)
+			{
+				throw std::invalid_argument("This value is not in the tree");
+			}
+		}
+		current->value = newData;
+	}
 }
 
 template <typename T>
