@@ -25,6 +25,8 @@ class BST
 		TreeNode<T>* getSuccessor(TreeNode<T> d); //helper function for delete method
 		void printInOrder(TreeNode<T>* n);
 		TreeNode<T>* getRoot();
+		void write(const std::string& file_name, BST<T> data);
+		void read(const std::string& file_name, BST<T> data); 
 
 	private:
 		TreeNode<T>* root;
@@ -361,3 +363,20 @@ bool BST<T>::deleteNode(TreeNode<T> someNode)//could return something else
 	return true;
 
 }
+template <typename T>
+void BST<T>::write(const std::string& file_name, BST<T> data) // Writes the given BST data to the given file name.
+{
+	ofstream out;
+	out.open(file_name,std::ios::binary);
+	out.write(reinterpret_cast<char*>(&data), sizeof(BST<T>));
+	out.close();
+}
+template <typename T>
+void BST<T>::read(const std::string& file_name, BST<T> data) // Reads the given file and assigns the data to the given BST.
+{
+	ifstream in;
+	in.open(file_name,std::ios::binary);
+	in.read(reinterpret_cast<char*>(&data), sizeof(BST<T>));
+	in.close();
+}
+
