@@ -167,18 +167,27 @@ void Simulation::option5()
 			goodValue=false;
 		}
 	}while(!goodValue);
-	Advisor anAdvisor(theID);
-	cout<<anAdvisor<<endl; //print out the advisors info
-	if(masterFaculty.contains(anAdvisor))
+
+	if(masterStudent.contains(Student(theID)))
 	{
-		Advisor theAdvisor = masterFaculty.getNode(Advisor(theID));
-		cout<<theAdvisor<<endl;
+		Student theStudent = masterStudent.getNode(Student(theID));
+		int advID = theStudent.getAdvisorID();
+		if(masterFaculty.contains(Advisor(advID)))
+		{
+			Advisor someAdvisor = masterFaculty.getNode(Advisor(advID));
+			cout<<someAdvisor<<endl;
+		}
+		else
+		{
+			cout<<"Invalid faculty ID"<<endl;
+		}
 	}
 	else
 	{
-		cout<<"This faculty member is not in the system."<<endl;
+		cout<<"Invalid Student ID."<<endl;
 	}
 }
+
 void Simulation::option6()
 {
 	bool goodValue;
