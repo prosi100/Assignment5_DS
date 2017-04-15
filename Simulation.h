@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <iostream>
+#include "Stack.h"
 
 using namespace std;
 
@@ -137,7 +138,7 @@ void Simulation::option4()
 			goodValue=false;
 		}
 	}while(!goodValue);
-	if(masterFaculty.contains(anAdvisor))
+	if(masterFaculty.contains(Advisor(theID)))
 	{
 		cout<<"out"<<endl;
 		Advisor theAdvisor = masterFaculty.getNode(Advisor(theID));
@@ -150,6 +151,7 @@ void Simulation::option4()
 }
 void Simulation::option5()
 {
+	bool goodValue;
 	string inputString;
 	cout << "Enter the student's ID: " << endl;
 	int theID;
@@ -179,6 +181,7 @@ void Simulation::option5()
 }
 void Simulation::option6()
 {
+	bool goodValue;
 	string inputString;
 	cout << "Enter the faculty's ID: " << endl;
 	int theID;
@@ -279,8 +282,9 @@ void Simulation::option7()
 		masterFaculty.insertDataAtNode(theirAdvisor, theirAdvisor);
 	}
 }
-void Simulation::option8
+void Simulation::option8()
 {
+	bool goodValue;
 	string inputString;
 	cout << "Enter the student's ID: " << endl;
 	int theID;
@@ -341,6 +345,7 @@ void Simulation::option9()
 }
 void Simulation::option10()
 {
+	bool goodValue;
 	string inputString;
 	cout << "Enter the advisor's ID: " << endl;
 	int theID;
@@ -363,6 +368,7 @@ void Simulation::option10()
 }
 void Simulation::option11()
 {
+	bool goodValue;
 	string inputString;
 	cout << "Enter the advisor's ID: " << endl;
 	int theID;
@@ -399,7 +405,7 @@ void Simulation::option11()
 }
 void Simulation::option12()
 {
-
+	bool goodValue;
 	string inputString;
 	cout << "Enter the advisor's ID: " << endl;
 	int theID;
@@ -456,5 +462,4 @@ BST<Advisor> Simulation::getMasterAdvisor()
 {
 	return masterFaculty;
 }
-
 
