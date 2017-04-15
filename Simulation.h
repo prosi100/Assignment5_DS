@@ -206,9 +206,20 @@ void Simulation::option6()
 			goodValue=false;
 		}
 	}while(!goodValue);
-	Advisor anAdvisor(theID);
-	//print advisees
 	
+	if (masterFaculty.contains(Advisor(theID)))
+	{
+		Advisor theAdvisor = masterFaculty.getNode(Advisor(theID));
+		vector<int> theList = theAdvisor.getStudentList();
+		for(int i=0; i<theList.size();++i)
+		{
+			cout<<masterStudent.getNode(Student(theList[i]))<<endl;
+		}
+	}
+	else
+	{
+		cout<<"Invalid advisor ID"<<endl;
+	}
 }
 
 void Simulation::option7()
