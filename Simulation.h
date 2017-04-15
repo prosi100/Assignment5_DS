@@ -421,24 +421,46 @@ void Simulation::option11()
 			goodValue=false;
 		}
 	}while(!goodValue);
-	Advisor myAdvisor= masterFaculty.getNode(Advisor(theID)); //makes advisor based off id
-	rollbackAd.push(myAdvisor);
-
-	cout << "Enter the student's ID: " << endl;
-	do//checks that the input is valid
+	if (masterFaculty.contains(Advisor(theID)))
 	{
-		goodValue = true;			
-		cin>>inputString;
-		int count = 0;
-		theID = checkIntegerInput(inputString);
-		if(theID==-1)
+		cout << "Enter the student's ID: " << endl;
+		int theID2;
+		do//checks that the input is valid
 		{
-			cout<<"Please enter a valid number"<<endl;
-			goodValue=false;
+			goodValue = true;			
+			cin>>inputString;
+			int count = 0;
+			theID2 = checkIntegerInput(inputString);
+			if(theID2==-1)
+			{
+				cout<<"Please enter a valid number"<<endl;
+				goodValue=false;
+			}
+		}while(!goodValue);
+		if (masterStudent.contains(Student(theID2)))
+		{
+			Student Student1 = masterStudent.getNode(Student(theID2));
+			int adID = Student1.getAdvisorID();
+			Advisor advisor1 = masterFaculty.getNode(Advisor(adID));
+			advisor1.removeStudent(theID2);
+			Student1.setAdvisorID(theID);
+			masterStudent.insertDataAtNode(Student1,Student(theID2));
+			masterFaculty.insertDataAtNode(advisor1, Advisor(adID));
+			Advisor Advisor2 = masterFaculty.getNode(Advisor(theID));
+			Advisor2.addStudent(theID2);
+			masterFaculty.insertDataAtNode(Advisor2, Advisor(theID));
+
 		}
-	}while(!goodValue);
-	Student myStudent= masterStudent.getNode(Student(theID)); //makes student based off id
-	rollbackStd.push(myStudent);
+		else 
+		{
+			cout << "This is not a valid student ID" << endl;
+		}
+	}
+	else 
+	{
+		cout << "This is not a valid advisor ID" << endl;
+	}
+
 }
 void Simulation::option12()
 {
