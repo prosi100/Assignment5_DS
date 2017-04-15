@@ -124,15 +124,9 @@ void Simulation::option4()
 			cout<<"Please enter a valid number"<<endl;
 			goodValue=false;
 		}
-		cout<<"got to the end"<<endl;
 	}while(!goodValue);
-	cout<<theID<<endl;
-	Advisor anAdvisor(theID);
-	cout<<"made"<<endl;
-	cout<<anAdvisor<<endl;
-	if(masterFaculty.contains(anAdvisor))
+	if(masterFaculty.contains(Advisor(theID)))
 	{
-		cout<<"out"<<endl;
 		Advisor theAdvisor = masterFaculty.getNode(Advisor(theID));
 		cout<<theAdvisor<<endl;
 	}
@@ -152,7 +146,7 @@ void Simulation::option7()
 	double GPA;
 	int id;			
 	int advisorID;
-	cout<<"Please enter the stuent's name: "<<endl;
+	cout<<"Please enter the student's name: "<<endl;
 	cin>>name;
 	cout<<"Please enter the student's level: "<<endl;
 	cin>>level;
@@ -205,30 +199,21 @@ void Simulation::option7()
 			goodValue=false;
 			continue;
 		}
-		/*cout<<"hp"<<endl;
-		Advisor myGuy;
-		cout<<"why"<<endl;
-		//cout<<myGuy<<endl;
-		if(masterFaculty.contains(Advisor(123))==false)
+		
+		if(!masterFaculty.contains(Advisor(advisorID)))
 		{
 			cout<<"This faculty member does not exist in the system.  Returning to menu"<<endl;//exits if the faculty advisor does not exist
 			goodValue = false;
 			break;
 		}
-		cout<<"past"<<endl;*/
 	}while(!goodValue);
-	cout<<"out of loop"<<endl;
 
 	if(goodValue)
 	{
 		masterStudent.insert(Student(name, level, major, GPA, id, advisorID));
-		cout<<"inserted"<<endl;
-		/*Advisor theirAdvisor = masterFaculty.getNode(Advisor(advisorID));
-		cout<<"got advisor"<<endl;
+		Advisor theirAdvisor = masterFaculty.getNode(Advisor(advisorID));
 		theirAdvisor.addStudent(id);
-		cout<<"added student"<<endl;
 		masterFaculty.insertDataAtNode(theirAdvisor, theirAdvisor);
-		cout<<"nooooooo"<<endl;*/
 	}
 }
 
@@ -240,7 +225,6 @@ void Simulation::option9()
 	string level;
 	string department;
 	int id;	
-	//what do we do about the student IDs??????
 	cout<<"Please enter the faculty member's name: "<<endl;
 	cin>>name;
 	cout<<"Please enter the faculty member's level: "<<endl;
