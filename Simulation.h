@@ -320,14 +320,31 @@ void Simulation::option8()
 			goodValue=false;
 		}
 	}while(!goodValue);
-	Student myStudent= masterStudent.getNode(Student(theID)); //makes student based off id
-	Advisor advisorID = myStudent.getAdvisorID(); //find advisor id 
-	Advisor myAdviosr = masterFaculty.getNode(Advisor(advisorID)); //find advisor in bst based off id
-	masterFaculty.deleteNode(Advisor(theID)); //delete student id from advisor 
-	masterStudent.deleteNode(Student(theID)); //delete student
-	rollbackStd.push(myStudent);
-
+	
+	if(masterStudent.contains(Student(theID)))
+	{
+		//need to push to the stack
+		Student myStudent= masterStudent.getNode(Student(theID)); //gets student from tree
+		cout<<"1"<<endl;
+		int studentID = myStudent.getID();
+		cout<<"2"<<endl;
+		int advID = myStudent.getAdvisorID();//gets advisor id
+		cout<<"3"<<endl;
+		Advisor myAdvisor = masterFaculty.getNode(Advisor(advID)); //find advisor in bst based off id
+		cout<<"4"<<endl;
+		myAdvisor.removeStudent(studentID);
+		cout<<"5"<<endl;
+		masterFaculty.insertDataAtNode(myAdvisor,Advisor(advID));
+		cout<<"6"<<endl;
+		masterStudent.deleteNode(myStudent); //delete student
+		cout<<"7"<<endl;
+	}
+	else
+	{
+		cout<<"Invalid student ID"<<endl;
+	}
 }
+
 
 void Simulation::option9()
 {
