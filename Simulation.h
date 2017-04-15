@@ -300,11 +300,11 @@ void Simulation::option8()
 			goodValue=false;
 		}
 	}while(!goodValue);
-	Student myStudent= masterStudent.getNode(Student(ID)); //makes student based off id
-	advisorID = myStudent.getAdvisorID(); //find advisor id 
+	Student myStudent= masterStudent.getNode(Student(theID)); //makes student based off id
+	Advisor advisorID = myStudent.getAdvisorID(); //find advisor id 
 	Advisor myAdviosr = masterFaculty.getNode(Advisor(advisorID)); //find advisor in bst based off id
-	masterFaculty.deleteNode(masterFaculty Advisor(ID)); //delete student id from advisor 
-	masterStudent.deleteNode(masterStudent Student(ID)); //delete student
+	masterFaculty.deleteNode(Advisor(theID)); //delete student id from advisor 
+	masterStudent.deleteNode(Student(theID)); //delete student
 	rollbackStd.push(myStudent);
 
 }
@@ -361,8 +361,8 @@ void Simulation::option10()
 			goodValue=false;
 		}
 	}while(!goodValue);
-	Advisor myAdvisor= masterAdvisor.getNode(Advisor(ID)); //makes advisor based off id
-	masterFaculty.deleteNode(masterFaculty Advisor(ID)); //delete advisor 
+	Advisor myAdvisor= masterFaculty.getNode(Advisor(theID)); //makes advisor based off id
+	masterFaculty.deleteNode(Advisor(theID)); //delete advisor 
 	rollbackAd.push(myAdvisor);
 
 }
@@ -384,7 +384,7 @@ void Simulation::option11()
 			goodValue=false;
 		}
 	}while(!goodValue);
-	Advisor myAdvisor= masterAdvisor.getNode(Advisor(ID)); //makes advisor based off id
+	Advisor myAdvisor= masterFaculty.getNode(Advisor(theID)); //makes advisor based off id
 	rollbackAd.push(myAdvisor);
 
 	cout << "Enter the student's ID: " << endl;
@@ -400,7 +400,7 @@ void Simulation::option11()
 			goodValue=false;
 		}
 	}while(!goodValue);
-	Student myStudent= masterStudent.getNode(Student(ID)); //makes student based off id
+	Student myStudent= masterStudent.getNode(Student(theID)); //makes student based off id
 	rollbackStd.push(myStudent);
 }
 void Simulation::option12()
@@ -421,7 +421,7 @@ void Simulation::option12()
 			goodValue=false;
 		}
 	}while(!goodValue);
-	Advisor myAdvisor= masterAdvisor.getNode(Advisor(ID)); //makes advisor based off id
+	Advisor myAdvisor= masterFaculty.getNode(Advisor(theID)); //makes advisor based off id
 	rollbackAd.push(myAdvisor);
 
 	cout << "Enter the student's ID: " << endl;
@@ -437,16 +437,16 @@ void Simulation::option12()
 			goodValue=false;
 		}
 	}while(!goodValue);
-	Student myStudent= masterStudent.getNode(Student(ID)); //makes student based off id
+	Student myStudent= masterStudent.getNode(Student(theID)); //makes student based off id
 	rollbackStd.push(myStudent);
 }
 void Simulation::option13()
 {
-	while (rollbackAd!=isEmpty())
+	while (rollbackAd.isEmpty()==false)
 	{
 		masterFaculty.insert(rollbackAd.pop()); //pop advisor off stack and back into tree
 	}
-	while (rollbackStd!=isEmpty())
+	while (rollbackStd.isEmpty()==false)
 	{
 		masterStudent.insert(rollbackStd.pop()); //pop student off stack and back into tree
 	}
@@ -462,4 +462,5 @@ BST<Advisor> Simulation::getMasterAdvisor()
 {
 	return masterFaculty;
 }
+
 
