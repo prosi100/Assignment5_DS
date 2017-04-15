@@ -64,7 +64,7 @@ Advisor::Advisor(int theID)
 
 Advisor::~Advisor()
 {
-
+	cout<<"Advisor Destroyed"<<endl;
 }
 
 void Advisor::addStudent(int studentID)
@@ -91,7 +91,10 @@ void Advisor::removeStudent(int studentID)
 	{
 		cout<<"Student does not belong to this advisor"<<endl;
 	}
-	studentList.erase(studentList.begin()+(index-1));
+	else
+	{
+		studentList.erase(studentList.begin()+index);
+	}
 }
 
 void Advisor::printStudentList()
