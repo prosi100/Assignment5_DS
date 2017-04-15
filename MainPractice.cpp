@@ -43,8 +43,15 @@ int main()
 	myList.removeNode(3);
 	myList.printList();*/
 
+	GenStack<Student> rollbackStd; //make stack for rollback 
+	GenStack<Advisor> rollbackAd;
+
 	BST<Student> masterStudent;
 	BST<Advisor> masterFaculty;//once we do object serialization we will need to fix this
+
+	masterStudent.read("studentTable.txt", masterStudent);
+	masterFaculty.read("facultyTable.txt", masterFaculty);
+
 	Simulation simObject(masterStudent, masterFaculty);
 	bool myvalue = true;
 	
@@ -105,19 +112,49 @@ int main()
 				simObject.option4();
 
 			}
+			else if (userChoice==5)
+			{
+				simObject.option5();
+			}
+			else if (userChoice==6)
+			{
+				simObject.option6();
+			}
 
 			else if(userChoice==7)
 			{
 				simObject.option7();
+			}
+			else if (userChoice==8)
+			{
+				simObject.option8();
 			}
 
 			else if(userChoice==9)
 			{
 				simObject.option9();
 			}
+			else if (userChoice==10)
+			{
+				simObject.option10();
+			}
+			else if (userChoice==11)
+			{
+				simObject.option11();
+			}
+			else if (userChoice==12)
+			{
+				simObject.option12();
+			}
+			else if (userChoice==13)
+			{
+				simObject.option13();
+			}
 			else//save and exit
 			{
 				myvalue = false;
+				masterFaculty.write("facultyTable.txt", simObject.getMasterAdvisor());
+				masterStudent.write("studentTable.txt", simObject.getMasterStudent());
 			}
 
 	}
