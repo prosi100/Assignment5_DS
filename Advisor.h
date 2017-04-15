@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
-#include "DLinkedList.h"
+#include <vector>
+#include <sstream>
+#include <algorithm>
 using namespace std;
 
 class Advisor
@@ -11,6 +13,7 @@ private:
 	string department;
 	int ID;
 	//DLinkedList<int> studentList;
+	vector<int> studentList;
 
 public:
 	Advisor();
@@ -19,12 +22,14 @@ public:
 	Advisor(int theID);
 	void addStudent(int studentID);
 	void removeStudent(int studentID);
+	int locateStudent(int studentID);
 	string getName()const;
 	string getLevel()const;
 	string getDepartment()const;	
 	string studentListToString()const;
+	string convertToString(int theValue) const;
 	int getID()const;
-	DLinkedList<int>* getStudentList();
+	vector<int> getStudentList();
 	void printStudentList();
 	bool operator>(Advisor &myObj);
 	bool operator<(Advisor &myObj);
@@ -39,7 +44,6 @@ Advisor::Advisor()
 	level = "";
 	department = "";
 	ID = 0;
-	DLinkedList<int> studentList;
 }
 
 Advisor::Advisor(string theName, string theLevel, string theDepartment, int theID)
@@ -48,7 +52,6 @@ Advisor::Advisor(string theName, string theLevel, string theDepartment, int theI
 	level = theLevel;
 	department = theDepartment;
 	ID = theID;
-	//DLinkedList<int> studentList;
 }
 
 Advisor::Advisor(int theID)
@@ -57,7 +60,6 @@ Advisor::Advisor(int theID)
 	level ="";
 	department="";
 	ID = theID;
-	//DLinkedList<int> studentList;
 }
 
 Advisor::~Advisor()
@@ -67,17 +69,38 @@ Advisor::~Advisor()
 
 void Advisor::addStudent(int studentID)
 {
-	//studentList.insertBack(studentID);
+	studentList.push_back(studentID);
+}
+
+int Advisor::locateStudent(int studentID)
+{
+	for(int i=0; i<studentList.size();++i)
+	{
+		if (studentID==studentList[i])
+		{
+			return i;
+		}
+	}
+	return -1;
 }
 
 void Advisor::removeStudent(int studentID)
 {
-
+	int index = locateStudent(studentID);
+	if (index==-1)
+	{
+		cout<<"Student does not belong to this advisor"<<endl;
+	}
+	studentList.erase(studentList.begin()+(index-1));
 }
 
 void Advisor::printStudentList()
 {
-	//studentList.printList();
+	for(int i=0; i<studentList.size();++i)
+	{
+		cout<<studentList[i]<<" ";
+	}
+	cout<<endl;
 }
 
 string Advisor::getName() const
@@ -100,9 +123,9 @@ int Advisor::getID() const
 	return ID;
 }
 
-DLinkedList<int>* Advisor::getStudentList() 
+vector<int> Advisor::getStudentList() 
 {
-	//return &studentList;
+	return studentList;
 }
 
 bool Advisor::operator>(Advisor &myObj)
@@ -141,9 +164,21 @@ bool Advisor::operator!=(Advisor &myObj)
 	return this->ID!=myObj.ID;
 }
 
+string Advisor::convertToString(int theValue) const
+{
+   stringstream ss;//create a stringstream
+   ss << theValue;//add number to the stream
+   return ss.str();//return a string with the contents of the stream
+}
+
 string Advisor::studentListToString() const
 {
-	//return studentList.listToString();
+	string myString = "";
+	for (int i=0; i<studentList.size(); ++i)
+	{
+		myString +=convertToString(studentList[i])+" ";	
+	}	
+	return myString;
 }
 
 ostream& operator<<(ostream& os, const Advisor& obj)
