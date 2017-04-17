@@ -363,45 +363,58 @@ bool BST<T>::deleteNode(TreeNode<T> someNode)//could return something else
 	return true;
 
 }
-
 template <typename T>
 TreeNode<T>* BST<T>::getRandomNode(TreeNode<T>* someNode)//pass in root 
 {
-	srand(time(NULL));
 	int random = rand()%size;
+	cout<<"Random Number: "<<random<<endl;
 	TreeNode<T>* temp = someNode;
 	someNode = getRandomNode(random, temp, 0);
+	//cout<<"10"<<endl;
 	return someNode;
 }
 
 template <typename T>
 TreeNode<T>* BST<T>::getRandomNode(int random, TreeNode<T>* temp, int count)
-{
+{	
 	if(temp!=NULL&&count!=random)
 	{
 		++count;
-		int pathRan = rand()%2;
+		TreeNode<T>* temp2 = NULL;
+		if(temp->left!=NULL)//you can go left
+		{
+			temp = getRandomNode(random, temp->left, count);
+		}
+		else//you can't go left
+		{
+			temp = getRandomNode(random, temp->right, count);
+		}
+		return temp;
+
+		/*++count;
+		int pathRan = rand()%2;		
 		TreeNode<T>* temp2 = NULL;
 		if (pathRan==0)//go left
-		{
-			temp2 = getRandomNode(random, temp->left, count);
+		{					
 			if (temp2==NULL)//if you can't go left, try right
 			{
 				temp2 = getRandomNode(random, temp->right, count);
 			}
+			temp2 = getRandomNode(random, temp->left, count);
 		}
 		else
-		{
-			temp2 = getRandomNode(random, temp->right, count);
+		{		
 			if(temp2 ==NULL)
 			{
 				temp2 = getRandomNode(random, temp->left, count);
 			}
+			temp2 = getRandomNode(random, temp->right, count);
 		}
-		return temp2;
+		return temp2;*/
 	}
 	return temp;
 }
+
 template <typename T>
 void BST<T>::write(const std::string& file_name, BST<T> data) // Writes the given BST data to the given file name.
 {
