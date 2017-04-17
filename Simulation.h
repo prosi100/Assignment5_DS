@@ -382,6 +382,7 @@ void Simulation::option9()
 }
 void Simulation::option10()
 {
+	//need to push to stack
 	bool goodValue;
 	string inputString;
 	cout << "Enter the advisor's ID: " << endl;
@@ -398,9 +399,43 @@ void Simulation::option10()
 			goodValue=false;
 		}
 	}while(!goodValue);
-	Advisor myAdvisor= masterFaculty.getNode(Advisor(theID)); //makes advisor based off id
-	masterFaculty.deleteNode(Advisor(theID)); //delete advisor 
-	rollbackAd.push(myAdvisor);
+
+	if(masterFaculty.contains(Advisor(theID)))
+	{
+		if(masterStudent.getSize()==0)
+		{
+			masterFaculty.deleteNode(Advisor(theID));		
+		}
+		else if(masterFaculty.getSize()>1)
+		{
+			vector<int> studList = masterFaculty.getNode(Advisor(theID)).getStudentList();
+			masterFaculty.deleteNode(Advisor(theID));			
+			while(!studList.empty())
+			{
+				int studentID = studList[0];				
+				Advisor newAdvisor = masterFaculty.getRandomNode(masterFaculty.getRoot())->getData();
+				newAdvisor.addStudent(studentID);
+				int newAdvisorID = newAdvisor.getID();
+				masterFaculty.insertDataAtNode(newAdvisor, newAdvisor);//updated the advisor by adding the student
+
+				Student updateStudent = masterStudent.getNode(Student(studentID));
+				updateStudent.setAdvisorID(newAdvisorID);
+				masterStudent.insertDataAtNode(updateStudent, updateStudent);
+				studList.erase(studList.begin());
+			}
+		}
+		
+		else
+		{
+			cout<<"You cannot delete the faculty member(s), because the students will have no advisor!"<<endl;
+		}
+
+	}
+
+	else
+	{
+		cout<<"This faculty member does not exist"<<endl;
+	}
 
 }
 void Simulation::option11()
