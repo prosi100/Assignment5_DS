@@ -380,12 +380,11 @@ TreeNode<T>* BST<T>::getRandomNode(int random, TreeNode<T>* temp, int count)
 	if(temp!=NULL&&count!=random)
 	{
 		++count;
-		TreeNode<T>* temp2 = NULL;
 		if(temp->left!=NULL)//you can go left
 		{
 			temp = getRandomNode(random, temp->left, count);
 		}
-		else//you can't go left
+		else if(temp->right!=NULL)//you can go right
 		{
 			temp = getRandomNode(random, temp->right, count);
 		}
