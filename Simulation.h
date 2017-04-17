@@ -495,44 +495,60 @@ void Simulation::option11()
 	{
 		cout << "This is not a valid advisor ID" << endl;
 	}
-
 }
+
 void Simulation::option12()
 {
 	bool goodValue;
 	string inputString;
-	cout << "Enter the advisor's ID: " << endl;
-	int theID;
-	do//checks that the input is valid
-	{
-		goodValue = true;			
-		cin>>inputString;
-		int count = 0;
-		theID = checkIntegerInput(inputString);
-		if(theID==-1)
-		{
-			cout<<"Please enter a valid number"<<endl;
-			goodValue=false;
-		}
-	}while(!goodValue);
-	Advisor myAdvisor= masterFaculty.getNode(Advisor(theID)); //makes advisor based off id
-	rollbackAd.push(myAdvisor);
-
+	int studentID;
 	cout << "Enter the student's ID: " << endl;
 	do//checks that the input is valid
 	{
 		goodValue = true;			
 		cin>>inputString;
 		int count = 0;
-		theID = checkIntegerInput(inputString);
-		if(theID==-1)
+		studentID = checkIntegerInput(inputString);
+		if(studentID==-1)
 		{
 			cout<<"Please enter a valid number"<<endl;
 			goodValue=false;
 		}
 	}while(!goodValue);
-	Student myStudent= masterStudent.getNode(Student(theID)); //makes student based off id
-	rollbackStd.push(myStudent);
+	if(masterStudent.contains(Student(studentID)))
+	{
+		if(masterFaculty.getSize()>2)
+		{
+			Student myStudent= masterStudent.getNode(Student(studentID)); //makes student based off id
+			int advisorID = myStudent.getAdvisorID();
+			Advisor advisor1 = masterFaculty.getNode(Advisor(advisorID));
+			advisor1.removeStudent(studentID);
+			masterFaculty.insertDataAtNode(advisor1, advisor1);
+			Advisor advisor2 = masterFaculty.getRandomNode(masterFaculty.getRoot())->getData();
+			while (true)
+			{	
+				advisor2 = masterFaculty.getRandomNode(masterFaculty.getRoot())->getData();			
+				if (advisor1!=advisor2)
+				{
+					break;
+				}
+			}
+			
+			advisor2.addStudent(studentID);
+			myStudent.setAdvisorID(advisor2.getID());
+			masterStudent.insertDataAtNode(myStudent, myStudent);
+			masterFaculty.insertDataAtNode(advisor2,advisor2);
+		}
+		else
+		{
+			cout<<"You do not have enough faculty members to perform this operation"<<endl;
+		}
+	}
+	else
+	{
+		cout<<"This is not a valid ID"<<endl;
+	}
+
 }
 void Simulation::option13()
 {
