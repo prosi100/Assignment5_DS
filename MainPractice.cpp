@@ -16,37 +16,23 @@ BST<Advisor> masterFaculty("facultyTable.txt");
 //deserializes student/faculty trees
 	void initDatabases()
 	{
-    	//masterStudent.deserialize();
+    	masterStudent.deserialize();
     	masterFaculty.deserialize();
 	}
 
 //serializes student/faculty trees
 	void saveDatabases()
 	{
-    	//masterStudent.serialize();
+    	masterStudent.serialize();
     	masterFaculty.serialize();
 	}
 
 
 int main()
 {
-	Advisor myAdvisor("Rene", "Top","CS", 124861);
-	cout<<myAdvisor.ToString();
 	srand(time(NULL));
-	/*int size = 4;
-	string s;
-	while (true)
-	{
-		int random = rand()%size;
-		cout<<random<<endl;
-		cin>>s;
-	}*/
 
 	initDatabases();
-
-	//masterStudent.read("studentTable.txt", masterStudent);
-	//masterFaculty.read("facultyTable.txt", masterFaculty);
-	//masterFaculty.printInOrder(masterFaculty.getRoot());
 
 	Simulation simObject(masterStudent, masterFaculty);
 	bool myvalue = true;
@@ -156,24 +142,9 @@ int main()
 			else//save and exit
 			{
 				masterFaculty = simObject.getMasterAdvisor();
-				masterFaculty.printInOrder(masterFaculty.getRoot());
 				masterStudent = simObject.getMasterStudent();
 				saveDatabases();
-				//for(int i=0;i<100;++i)
-				//{
-				//	someTree.insert(Advisor("Joe Smith", "High Level", "Comp Sci", i*112));
-				//}
-				//someTree.printInOrder(someTree.getRoot());
-				//someTree.writePreOrder(someTree.getRoot());
-				//someTree.read("facultyTable.bin", myTree);
-				//cout<<"Size Before: "<<sizeof(someTree)<<endl;
-				//cout<<"Size: "<<myTree.getSize()<<endl;
 				myvalue = false;
-				/*masterFaculty.write("facultyTable.txt", simObject.getMasterAdvisor());
-				masterStudent.write("studentTable.txt", simObject.getMasterStudent());
-				masterStudent.read("studentTable.txt", masterStudent);
-				masterFaculty.read("facultyTable.txt",masterFaculty);
-				cout<<masterFaculty.getSize()<<endl;*/
 			}
 
 	}
