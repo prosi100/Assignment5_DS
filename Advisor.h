@@ -19,6 +19,8 @@ public:
 	Advisor();
 	~Advisor();
 	Advisor(string theName, string theLevel, string theDepartment, int theID);
+	Advisor(string theName, string theLeve, string theDepartment, int theID, vector<int> theList);
+	Advisor(string dataRec);
 	Advisor(int theID);
 	void addStudent(int studentID);
 	void removeStudent(int studentID);
@@ -35,6 +37,7 @@ public:
 	bool operator<(Advisor &myObj);
 	bool operator==(Advisor &myObj);
 	bool operator!=(Advisor &myObj);
+	virtual string ToString();
 	friend ostream& operator<<(ostream& os, const Advisor& obj);	
 };
 
@@ -54,6 +57,29 @@ Advisor::Advisor(string theName, string theLevel, string theDepartment, int theI
 	ID = theID;
 }
 
+Advisor::Advisor(string theName, string theLevel, string theDepartment, int theID, vector<int> theList)
+{
+	name = theName;
+	level = theLevel;
+	department = theDepartment;
+	ID = theID;
+	studentList = theList;
+}
+
+ // Stores varaibles for faculty
+Advisor::Advisor(string dataRec) 
+{
+    istringstream data(dataRec);
+    int numStudents;
+    data >> name >> level >> department >> ID >> numStudents;
+    for (int i = 0; i < numStudents; i++) 
+    {
+       int studentID;
+       data >> studentID;
+       studentList.push_back(studentID);
+    }
+}
+
 Advisor::Advisor(int theID)
 {
 	name = "";
@@ -64,7 +90,7 @@ Advisor::Advisor(int theID)
 
 Advisor::~Advisor()
 {
-	cout<<"Advisor Destroyed"<<endl;
+	
 }
 
 void Advisor::addStudent(int studentID)
@@ -172,6 +198,21 @@ string Advisor::convertToString(int theValue) const
    stringstream ss;//create a stringstream
    ss << theValue;//add number to the stream
    return ss.str();//return a string with the contents of the stream
+}
+
+string Advisor::ToString() //print method for faculty
+{
+    stringstream s;
+    string sep = " ";
+    s <<name << sep << level << sep << department << sep <<  ID << sep << studentList.size() << sep;
+    string result;
+    for (int i = 0; i < studentList.size (); ++i)
+    {
+        s << studentList[i] << sep;
+        s << '\n';
+    }
+    result = s.str();
+    return result;
 }
 
 string Advisor::studentListToString() const
