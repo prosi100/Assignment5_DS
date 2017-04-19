@@ -1,56 +1,52 @@
 #include <iostream>
+#include <string>
 #include <cstdlib>
 #include "Student.h"
 #include "BST.h"
 #include "Advisor.h"
 #include "Simulation.h"
+#include <ctime>
+
+using namespace std;
+
+
+BST<Student> masterStudent("studentTable.txt");
+BST<Advisor> masterFaculty("facultyTable.txt");
+
+//deserializes student/faculty trees
+	void initDatabases()
+	{
+    	//masterStudent.deserialize();
+    	masterFaculty.deserialize();
+	}
+
+//serializes student/faculty trees
+	void saveDatabases()
+	{
+    	//masterStudent.serialize();
+    	masterFaculty.serialize();
+	}
+
+
 int main()
 {
-	
-	/*Student myStudent ("Christine", "Junior", "Mathematics", 3.9, 1856076, 1234567);
-	//cout<<myStudent;
+	Advisor myAdvisor("Rene", "Top","CS", 124861);
+	cout<<myAdvisor.ToString();
+	srand(time(NULL));
+	/*int size = 4;
+	string s;
+	while (true)
+	{
+		int random = rand()%size;
+		cout<<random<<endl;
+		cin>>s;
+	}*/
 
-	BST<Student> myTree;
-	//myTree.insert(myStudent);
-	myTree.insert(Student("Sandra", "Sophomore", "AT", 3.0, 2256076, 9034567));
-	myTree.insert(Student("Emma","Freshman", "English",5.6, 1002345,48503940));
-	myTree.printInOrder(myTree.getRoot());
-	myTree.insertDataAtNode(myStudent, Student(2256076));
-	myTree.printInOrder(myTree.getRoot());*/
-	
+	initDatabases();
 
-	/*Advisor myAdvisor("Rene German", "Professor", "Computer Science", 1234567);
-	BST<Advisor> someTree;
-	myAdvisor.addStudent(1856076);
-	myAdvisor.addStudent(1374691);
-	myAdvisor.addStudent(3826491);
-	myAdvisor.printStudentList();
-	someTree.insert(myAdvisor);
-	cout<<"done"<<endl;
-	someTree.insert(Advisor("g","h","t",12345));
-	cout<<"do it: "<<someTree.contains(myAdvisor)<<endl;
-	cout<<"ok: "<<endl;
-	myAdvisor.printStudentList();
-	someTree.printInOrder(someTree.getRoot());
-	myAdvisor.printStudentList();
-	cout<<myAdvisor<<endl;*/
-
-	/*DLinkedList<int> myList;
-	myList.insertBack(1);
-	myList.insertBack(2);
-	myList.insertBack(3);
-	myList.printList();
-	myList.removeNode(3);
-	myList.printList();*/
-
-	GenStack<Student> rollbackStd; //make stack for rollback 
-	GenStack<Advisor> rollbackAd;
-
-	BST<Student> masterStudent;
-	BST<Advisor> masterFaculty;//once we do object serialization we will need to fix this
-
-	masterStudent.read("studentTable.txt", masterStudent);
-	masterFaculty.read("facultyTable.txt", masterFaculty);
+	//masterStudent.read("studentTable.txt", masterStudent);
+	//masterFaculty.read("facultyTable.txt", masterFaculty);
+	//masterFaculty.printInOrder(masterFaculty.getRoot());
 
 	Simulation simObject(masterStudent, masterFaculty);
 	bool myvalue = true;
@@ -70,7 +66,7 @@ int main()
 		cout<<"9. Add a new faculty member"<<endl;
 		cout<<"10. Delete a faculty member given the ID"<<endl;
 		cout<<"11. Change a student's advisor given the student ID and new faculty ID"<<endl;
-		cout<<"12. Remove an adviseefrom a faculty member given the IDs"<<endl;
+		cout<<"12. Remove an advisee from a faculty member given the student ID"<<endl;
 		cout<<"13. Rollback"<<endl;
 		cout<<"14. Save and Exit"<<endl;
 
@@ -93,7 +89,7 @@ int main()
 			}while(!goodValue);
 
 			if(userChoice==1)
-			{
+			{				
 				simObject.option1();
 			}
 
@@ -110,13 +106,14 @@ int main()
 			else if(userChoice==4)
 			{
 				simObject.option4();
-
 			}
-			else if (userChoice==5)
+
+			else if(userChoice==5)
 			{
 				simObject.option5();
 			}
-			else if (userChoice==6)
+
+			else if(userChoice==6)
 			{
 				simObject.option6();
 			}
@@ -125,7 +122,8 @@ int main()
 			{
 				simObject.option7();
 			}
-			else if (userChoice==8)
+
+			else if(userChoice==8)
 			{
 				simObject.option8();
 			}
@@ -134,27 +132,48 @@ int main()
 			{
 				simObject.option9();
 			}
-			else if (userChoice==10)
+
+			else if(userChoice==10)
 			{
 				simObject.option10();
 			}
-			else if (userChoice==11)
+
+			else if(userChoice==11)
 			{
 				simObject.option11();
 			}
-			else if (userChoice==12)
+
+			else if(userChoice==12)
 			{
 				simObject.option12();
 			}
-			else if (userChoice==13)
+
+			else if(userChoice==13)
 			{
 				simObject.option13();
 			}
+
 			else//save and exit
 			{
+				masterFaculty = simObject.getMasterAdvisor();
+				masterFaculty.printInOrder(masterFaculty.getRoot());
+				masterStudent = simObject.getMasterStudent();
+				saveDatabases();
+				//for(int i=0;i<100;++i)
+				//{
+				//	someTree.insert(Advisor("Joe Smith", "High Level", "Comp Sci", i*112));
+				//}
+				//someTree.printInOrder(someTree.getRoot());
+				//someTree.writePreOrder(someTree.getRoot());
+				//someTree.read("facultyTable.bin", myTree);
+				//cout<<"Size Before: "<<sizeof(someTree)<<endl;
+				//cout<<"Size: "<<myTree.getSize()<<endl;
 				myvalue = false;
-				masterFaculty.write("facultyTable.txt", simObject.getMasterAdvisor());
+				/*masterFaculty.write("facultyTable.txt", simObject.getMasterAdvisor());
 				masterStudent.write("studentTable.txt", simObject.getMasterStudent());
+				masterStudent.read("studentTable.txt", masterStudent);
+				masterFaculty.read("facultyTable.txt",masterFaculty);
+				cout<<masterFaculty.getSize()<<endl;*/
 			}
 
 	}
