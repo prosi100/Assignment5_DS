@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -17,13 +18,16 @@ class Student
 		Student();
 		~Student();
 		Student(string theName, string theLevel, string theMajor, double theGpa, int theID, int theAdvisorID);
+		Student(string dataRec);
 		Student(int theID);
 		string getName()const;
 		string getLevel()const;
 		string getMajor()const;
 		double getGPA()const;
 		int getID()const;
+		void setAdvisorID(int theID);
 		int getAdvisorID()const;
+		string ToString();
 		bool operator>(Student &myObj);
 		bool operator<(Student &myObj);
 		bool operator==(Student &myObj);
@@ -41,7 +45,10 @@ Student::Student()
 	advisorID = 0;
 }
 
-Student::~Student(){}//what happens here?
+Student::~Student()
+{
+
+}
 
 Student::Student(string theName, string theLevel, string theMajor, double theGpa, int theID, int theAdvisorID)
 {
@@ -51,6 +58,13 @@ Student::Student(string theName, string theLevel, string theMajor, double theGpa
 	gpa = theGpa;
 	ID = theID;
 	advisorID = theAdvisorID;
+}
+
+Student::Student(string dataRec) 
+{
+    istringstream data(dataRec);
+    int numStudents;
+    data >> name >> level >> major >> gpa >> ID >> advisorID;
 }
 
 Student::Student(int theID)
@@ -90,6 +104,21 @@ int Student::getID() const
 int Student::getAdvisorID() const
 {
 	return advisorID;
+}
+
+void Student::setAdvisorID(int theID)
+{
+	advisorID = theID;
+}
+
+string Student::ToString() //print method for faculty
+{
+    stringstream s;
+    string sep = " ";
+    s <<name << sep << level << sep << major << sep << gpa << sep << ID << sep << advisorID << sep;
+    string result;
+    result = s.str();
+    return result;
 }
 
 bool Student::operator>(Student &myObj)
