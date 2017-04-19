@@ -2,6 +2,13 @@
 #include <string>
 #include "TreeNode.h"
 #include <stdexcept>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <ctime>
+#include <cstdlib>
+
+#define MARKER "NULL"
 
 using namespace std;
 
@@ -10,32 +17,51 @@ class BST
 {
 	public:
 		BST();
+		BST(string theFile);
 		~BST();
 
 		void insert(T theValue);
+		int getSize()const;
 		bool contains(T someValue);
 		bool deleteNode(TreeNode<T> someNode);
 		void insertDataAtNode(T newData, T oldLocation);
+		void writePreOrder(TreeNode<T>* n);
 
 		bool isEmpty();
 		TreeNode<T>* getMax(); //right most
 		TreeNode<T>* getMin(); //left most
+		TreeNode<T>* getRandomNode(TreeNode<T>* someNode);
+		TreeNode<T>* getRandomNode(int random, TreeNode<T>* temp, int count);
 		T getNode(T someValue);//get the entire value at a node
 
 		TreeNode<T>* getSuccessor(TreeNode<T> d); //helper function for delete method
 		void printInOrder(TreeNode<T>* n);
 		TreeNode<T>* getRoot();
-		void write(const std::string& file_name, BST<T> data);
-		void read(const std::string& file_name, BST<T> data); 
+
+		void makeSerializedString(TreeNode<T> *node, ostringstream& serialStream);
+		void serialize();
+		void deserialize();
+
+		void write(const std::string& file_name, TreeNode<T> data);
+		void read(const std::string& file_name, TreeNode<T> data); 
 
 	private:
 		TreeNode<T>* root;
+		string fileName;
+		int size;
 };
 
 template <typename T>
 BST<T>::BST()
 {
 	root = NULL;
+	size =0;
+}
+
+template <typename T>
+BST<T>::BST(string theFile)
+{
+	fileName = theFile;
 }
 
 template <typename T>
@@ -48,6 +74,12 @@ template <typename T>
 bool BST<T>::isEmpty()
 {
 	return root==NULL;
+}
+
+template <typename T>
+int BST<T>::getSize() const
+{
+	return size;
 }
 
 template <typename T>
@@ -114,6 +146,35 @@ T BST<T>::getNode(T someValue)
 }
 
 template <typename T>
+TreeNode<T>* BST<T>::getRandomNode(TreeNode<T>* someNode)//pass in root 
+{
+	int random = rand()%size;
+	TreeNode<T>* temp = someNode;
+	someNode = getRandomNode(random, temp, 0);
+	//cout<<"10"<<endl;
+	return someNode;
+}
+
+template <typename T>
+TreeNode<T>* BST<T>::getRandomNode(int random, TreeNode<T>* temp, int count)
+{	
+	if(temp!=NULL&&count!=random)
+	{
+		++count;
+		if(temp->left!=NULL)//you can go left
+		{
+			temp = getRandomNode(random, temp->left, count);
+		}
+		else if(temp->right!=NULL)//you can go right
+		{
+			temp = getRandomNode(random, temp->right, count);
+		}
+		return temp;
+	}
+	return temp;
+}
+
+template <typename T>
 void BST<T>::insertDataAtNode(T newData, T oldLocation)
 {
 	if (root==NULL)
@@ -148,6 +209,7 @@ template <typename T>
 void BST<T>::insert(T theValue)//like a failed search. Could also make recursive.
 {
 	TreeNode<T>* node = new TreeNode<T>(theValue);	
+	++size;
 
 	if (root==NULL)//empty check
 	{
@@ -223,6 +285,17 @@ void BST<T>::printInOrder(TreeNode<T>* n)
 		printInOrder(n->left);
 		cout<<n->value<<endl;
 		printInOrder(n->right);
+	}
+}
+
+template <typename T>
+void BST<T>::writePreOrder(TreeNode<T>* n)
+{
+	if(n!=NULL)
+	{
+		write("mytable.bin", *n);
+		writePreOrder(n->left);
+		writePreOrder(n->right);
 	}
 }
 
@@ -359,75 +432,75 @@ bool BST<T>::deleteNode(TreeNode<T> someNode)//could return something else
 	}
 	current->left =NULL;
 	current->right=NULL;
-
+	--size;
 	return true;
 
 }
+
+
+//creates a string version of the database that can be saved or user to rebuild the tree
 template <typename T>
-TreeNode<T>* BST<T>::getRandomNode(TreeNode<T>* someNode)//pass in root 
+void BST<T>::makeSerializedString(TreeNode<T> *node, ostringstream& serialStream)
 {
-	int random = rand()%size;
-	cout<<"Random Number: "<<random<<endl;
-	TreeNode<T>* temp = someNode;
-	someNode = getRandomNode(random, temp, 0);
-	//cout<<"10"<<endl;
-	return someNode;
-}
-
-template <typename T>
-TreeNode<T>* BST<T>::getRandomNode(int random, TreeNode<T>* temp, int count)
-{	
-	if(temp!=NULL&&count!=random)
+	if(node == NULL) 
 	{
-		++count;
-		if(temp->left!=NULL)//you can go left
-		{
-			temp = getRandomNode(random, temp->left, count);
-		}
-		else if(temp->right!=NULL)//you can go right
-		{
-			temp = getRandomNode(random, temp->right, count);
-		}
-		return temp;
-
-		/*++count;
-		int pathRan = rand()%2;		
-		TreeNode<T>* temp2 = NULL;
-		if (pathRan==0)//go left
-		{					
-			if (temp2==NULL)//if you can't go left, try right
-			{
-				temp2 = getRandomNode(random, temp->right, count);
-			}
-			temp2 = getRandomNode(random, temp->left, count);
-		}
-		else
-		{		
-			if(temp2 ==NULL)
-			{
-				temp2 = getRandomNode(random, temp->left, count);
-			}
-			temp2 = getRandomNode(random, temp->right, count);
-		}
-		return temp2;*/
-	}
-	return temp;
+    	serialStream << MARKER << '\n';
+    	return;
+    }
+        
+        makeSerializedString(node->left, serialStream);
+        serialStream << node->value.ToString();
+        makeSerializedString(node->right, serialStream);
 }
-
+    
+    //writes tree to file
 template <typename T>
-void BST<T>::write(const std::string& file_name, BST<T> data) // Writes the given BST data to the given file name.
+void BST<T>::serialize()
+{
+    ofstream outFile; 
+    outFile.open(fileName.c_str());
+    ostringstream outStream;
+    makeSerializedString(root, outStream);
+    outFile << outStream.str();
+    outFile.close();
+}
+    
+    //reads tree from file
+template <typename T>
+void BST<T>::deserialize()
+{
+        delete root;
+        root = NULL;
+        
+        ifstream inFile;
+        inFile.open(fileName.c_str());
+        string textLine;
+        while (getline(inFile, textLine)){
+            if(textLine != MARKER)
+                insert(T(textLine));
+        }
+        
+        inFile.close();
+}
+    
+template <typename T>
+void BST<T>::write(const std::string& file_name, TreeNode<T> data) // Writes the given BST data to the given file name.
 {
 	ofstream out;
-	out.open(file_name,std::ios::binary);
-	out.write(reinterpret_cast<char*>(&data), sizeof(BST<T>));
+	out.open(file_name.c_str(),ios::out|ios::binary);
+	out.seekp(SEEK_END);
+	out.write(reinterpret_cast<char*>(&data), sizeof(data));
 	out.close();
 }
 template <typename T>
-void BST<T>::read(const std::string& file_name, BST<T> data) // Reads the given file and assigns the data to the given BST.
+void BST<T>::read(const std::string& file_name, TreeNode<T> data) // Reads the given file and assigns the data to the given BST.
 {
 	ifstream in;
-	in.open(file_name,std::ios::binary);
-	in.read(reinterpret_cast<char*>(&data), sizeof(BST<T>));
+	in.open(file_name.c_str(),ios::in|ios::binary);
+	in.read(reinterpret_cast<char*>(&data), sizeof(data));
+	if(!in)
+	{
+		cout<<"Read this much: "<<in.gcount()<<endl;
+	}
 	in.close();
 }
-
