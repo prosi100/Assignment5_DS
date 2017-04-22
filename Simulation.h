@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <iostream>
-#include "Stack.h"
+#include "GenStack.h"
 
 using namespace std;
 
@@ -17,21 +17,23 @@ class Simulation
 		void option4();
 		void option5();
 		void option6();
-		void option7(); 
-		void option8(); 
-		void option9(); 
-		void option10(); 
-		void option11(); 
-		void option12(); 
+		void option7();
+		void option8();
+		void option9();
+		void option10();
+		void option11();
+		void option12();
 		void option13();
-		BST<Student> getMasterStudent();
 		BST<Advisor> getMasterAdvisor();
+		BST<Student> getMasterStudent();
+		
 
 	private:
 		BST<Student> masterStudent;
 		BST<Advisor> masterFaculty;
-		GenStack<Student> rollbackStd;
-		GenStack<Advisor> rollbackAd;
+
+		GenStack<BST<Student> > rollbackStd; //make stack for rollback 
+		GenStack<BST<Advisor> > rollbackAd;
 };
 
 Simulation::Simulation(BST<Student> st,BST<Advisor> ad)
@@ -45,7 +47,7 @@ Simulation::~Simulation()
 
 }
 
-int Simulation::checkIntegerInput(string inputString)
+int Simulation::checkIntegerInput(string inputString)//makes sure the input is an integer
 {
 	int count = 0;
 	int userChoice;
@@ -66,7 +68,7 @@ int Simulation::checkIntegerInput(string inputString)
 	return userChoice;
 }
 
-void Simulation::option1()
+void Simulation::option1()//prints students
 {
 	if(masterStudent.isEmpty())
 	{
@@ -78,7 +80,7 @@ void Simulation::option1()
 	}
 }
 
-void Simulation::option2()
+void Simulation::option2()//prints faculty
 {
 	if(masterFaculty.isEmpty())
 	{
@@ -90,7 +92,7 @@ void Simulation::option2()
 	}
 }
 
-void Simulation::option3()
+void Simulation::option3()//prints student info given an ID
 {
 	bool goodValue;
 			string inputString;
@@ -120,7 +122,7 @@ void Simulation::option3()
 			}
 }
 
-void Simulation::option4()
+void Simulation::option4()//prints faculty info given an id
 {
 	bool goodValue;
 	string inputString;
@@ -140,7 +142,6 @@ void Simulation::option4()
 	}while(!goodValue);
 	if(masterFaculty.contains(Advisor(theID)))
 	{
-		cout<<"out"<<endl;
 		Advisor theAdvisor = masterFaculty.getNode(Advisor(theID));
 		cout<<theAdvisor<<endl;
 	}
@@ -149,7 +150,8 @@ void Simulation::option4()
 		cout<<"This faculty member is not in the system."<<endl;
 	}
 }
-void Simulation::option5()
+
+void Simulation::option5()//prints advisor given student id
 {
 	bool goodValue;
 	string inputString;
@@ -188,7 +190,8 @@ void Simulation::option5()
 	}
 }
 
-void Simulation::option6()
+
+void Simulation::option6()//prints student info given faculty id
 {
 	bool goodValue;
 	string inputString;
@@ -222,22 +225,29 @@ void Simulation::option6()
 	}
 }
 
-void Simulation::option7()
+void Simulation::option7()//adding a new student
 {
+	rollbackStd.push(masterStudent);//saves current info to stack
+	rollbackAd.push(masterFaculty);
 	string inputString;
 	bool goodValue;
-	string name;
-	string level;
-	string major;
 	double GPA;
 	int id;			
 	int advisorID;
+	
+	cin.ignore(256, '\n');
 	cout<<"Please enter the student's name: "<<endl;
-	cin>>name;
+	char name[100];
+	cin.getline(name, sizeof(name));
+	
 	cout<<"Please enter the student's level: "<<endl;
-	cin>>level;
+	char level[100];
+	cin.getline(level, sizeof(level));
+
 	cout<<"Please enter the student's major: "<<endl;
-	cin>>major;
+	char major[100];
+	cin.getline(major, sizeof(major));
+
 	cout<<"Please enter the student's GPA: "<<endl;
 	do
 	{
@@ -286,7 +296,7 @@ void Simulation::option7()
 			continue;
 		}
 		
-		if(!masterFaculty.contains(Advisor(advisorID)))
+		if(!masterFaculty.contains(Advisor(advisorID)))//must have valid faculty member
 		{
 			cout<<"This faculty member does not exist in the system.  Returning to menu"<<endl;//exits if the faculty advisor does not exist
 			goodValue = false;
@@ -302,8 +312,11 @@ void Simulation::option7()
 		masterFaculty.insertDataAtNode(theirAdvisor, theirAdvisor);
 	}
 }
-void Simulation::option8()
+
+void Simulation::option8()//deletes a student given the id
 {
+	rollbackStd.push(masterStudent);
+	rollbackAd.push(masterFaculty);
 	bool goodValue;
 	string inputString;
 	cout << "Enter the student's ID: " << endl;
@@ -323,21 +336,13 @@ void Simulation::option8()
 	
 	if(masterStudent.contains(Student(theID)))
 	{
-		//need to push to the stack
 		Student myStudent= masterStudent.getNode(Student(theID)); //gets student from tree
-		cout<<"1"<<endl;
 		int studentID = myStudent.getID();
-		cout<<"2"<<endl;
 		int advID = myStudent.getAdvisorID();//gets advisor id
-		cout<<"3"<<endl;
 		Advisor myAdvisor = masterFaculty.getNode(Advisor(advID)); //find advisor in bst based off id
-		cout<<"4"<<endl;
 		myAdvisor.removeStudent(studentID);
-		cout<<"5"<<endl;
 		masterFaculty.insertDataAtNode(myAdvisor,Advisor(advID));
-		cout<<"6"<<endl;
 		masterStudent.deleteNode(myStudent); //delete student
-		cout<<"7"<<endl;
 	}
 	else
 	{
@@ -345,22 +350,28 @@ void Simulation::option8()
 	}
 }
 
-
-void Simulation::option9()
+void Simulation::option9()//add a faculty member
 {
+	rollbackStd.push(masterStudent);//saves current info
+	rollbackAd.push(masterFaculty);
 	string inputString;
 	bool goodValue;
-	string name;
-	string level;
-	string department;
+	
 	int id;	
-	//what do we do about the student IDs??????
+	
+	cin.ignore(256, '\n');
 	cout<<"Please enter the faculty member's name: "<<endl;
-	cin>>name;
+	char name[100];
+	cin.getline(name,sizeof(name));
+	
 	cout<<"Please enter the faculty member's level: "<<endl;
-	cin>>level;
+	char level[100];
+	cin.getline(level, sizeof(level));
+	
 	cout<<"Please enter the faculty member's department: "<<endl;
-	cin>>department;
+	char department[100];
+	cin.getline(department, sizeof(department));
+	
 	
 	cout<<"Please enter the faculty member's ID"<<endl;
 	do//checks that the input is valid
@@ -378,11 +389,12 @@ void Simulation::option9()
 	}while(!goodValue);
 
 	masterFaculty.insert(Advisor(name, level, department, id));
-	rollbackAd.push(Advisor(name, level, department, id));
 }
-void Simulation::option10()
+
+void Simulation::option10()//delete a faculty member given id
 {
-	//need to push to stack
+	rollbackStd.push(masterStudent);
+	rollbackAd.push(masterFaculty);
 	bool goodValue;
 	string inputString;
 	cout << "Enter the advisor's ID: " << endl;
@@ -409,11 +421,12 @@ void Simulation::option10()
 		else if(masterFaculty.getSize()>1)
 		{
 			vector<int> studList = masterFaculty.getNode(Advisor(theID)).getStudentList();
+			int theSize = studList.size();//use the student list to reassign student advisors
 			masterFaculty.deleteNode(Advisor(theID));			
-			while(!studList.empty())
+			for(int i=0; i<theSize;++i)
 			{
 				int studentID = studList[0];				
-				Advisor newAdvisor = masterFaculty.getRandomNode(masterFaculty.getRoot())->getData();
+				Advisor newAdvisor = masterFaculty.getRandomNode(masterFaculty.getRoot())->getData();//gets data of random advisor
 				newAdvisor.addStudent(studentID);
 				int newAdvisorID = newAdvisor.getID();
 				masterFaculty.insertDataAtNode(newAdvisor, newAdvisor);//updated the advisor by adding the student
@@ -421,7 +434,7 @@ void Simulation::option10()
 				Student updateStudent = masterStudent.getNode(Student(studentID));
 				updateStudent.setAdvisorID(newAdvisorID);
 				masterStudent.insertDataAtNode(updateStudent, updateStudent);
-				studList.erase(studList.begin());
+				studList.erase(studList.begin());//erase the reassigned student from the list
 			}
 		}
 		
@@ -438,8 +451,11 @@ void Simulation::option10()
 	}
 
 }
-void Simulation::option11()
+
+void Simulation::option11()//changes a student's advisor
 {
+	rollbackStd.push(masterStudent);//save current info
+	rollbackAd.push(masterFaculty);
 	bool goodValue;
 	string inputString;
 	cout << "Enter the advisor's ID: " << endl;
@@ -477,12 +493,12 @@ void Simulation::option11()
 			Student Student1 = masterStudent.getNode(Student(theID2));
 			int adID = Student1.getAdvisorID();
 			Advisor advisor1 = masterFaculty.getNode(Advisor(adID));
-			advisor1.removeStudent(theID2);
+			advisor1.removeStudent(theID2);//removes student from the given advisor
 			Student1.setAdvisorID(theID);
 			masterStudent.insertDataAtNode(Student1,Student(theID2));
 			masterFaculty.insertDataAtNode(advisor1, Advisor(adID));
 			Advisor Advisor2 = masterFaculty.getNode(Advisor(theID));
-			Advisor2.addStudent(theID2);
+			Advisor2.addStudent(theID2);//gives student to the new advisor
 			masterFaculty.insertDataAtNode(Advisor2, Advisor(theID));
 
 		}
@@ -495,10 +511,13 @@ void Simulation::option11()
 	{
 		cout << "This is not a valid advisor ID" << endl;
 	}
+
 }
 
-void Simulation::option12()
+void Simulation::option12()//remove advisee from a faculty member
 {
+	rollbackStd.push(masterStudent);
+	rollbackAd.push(masterFaculty);
 	bool goodValue;
 	string inputString;
 	int studentID;
@@ -525,7 +544,7 @@ void Simulation::option12()
 			advisor1.removeStudent(studentID);
 			masterFaculty.insertDataAtNode(advisor1, advisor1);
 			Advisor advisor2 = masterFaculty.getRandomNode(masterFaculty.getRoot())->getData();
-			while (true)
+			while (true)//to get a random new advisor for the student which is not the same advisor
 			{	
 				advisor2 = masterFaculty.getRandomNode(masterFaculty.getRoot())->getData();			
 				if (advisor1!=advisor2)
@@ -550,18 +569,26 @@ void Simulation::option12()
 	}
 
 }
-void Simulation::option13()
+
+void Simulation::option13()//rollback
 {
-	while (rollbackAd.isEmpty()==false)
+	if(rollbackAd.getSize()==0)
 	{
-		masterFaculty.insert(rollbackAd.pop()); //pop advisor off stack and back into tree
+		cout<<"Could not undo last faculty operation"<<endl;
 	}
-	while (rollbackStd.isEmpty()==false)
+	else
 	{
-		masterStudent.insert(rollbackStd.pop()); //pop student off stack and back into tree
+		masterFaculty = rollbackAd.pop();
+	}
+	if(rollbackStd.getSize()==0)
+	{
+		cout<<"Could not undo last student operation"<<endl;
+	}
+	else
+	{
+		masterStudent = rollbackStd.pop();
 	}
 }
-
 
 BST<Student> Simulation::getMasterStudent()
 {
@@ -572,5 +599,3 @@ BST<Advisor> Simulation::getMasterAdvisor()
 {
 	return masterFaculty;
 }
-
-
