@@ -20,6 +20,11 @@ class BST
 		BST(string theFile);
 		~BST();
 
+		BST(const BST<T> & Q);
+		void copy(TreeNode<T>* n);
+		void chop(TreeNode<T> *n);
+		const BST<T>& operator=(const BST<T> &Q);
+
 		void insert(T theValue);
 		int getSize()const;
 		bool contains(T someValue);
@@ -41,9 +46,6 @@ class BST
 		void makeSerializedString(TreeNode<T> *node, ostringstream& serialStream);
 		void serialize();
 		void deserialize();
-
-		void write(const std::string& file_name, TreeNode<T> data);
-		void read(const std::string& file_name, TreeNode<T> data); 
 
 	private:
 		TreeNode<T>* root;
@@ -71,6 +73,47 @@ BST<T>::~BST()
 }
 
 template <typename T>
+BST<T>::BST(const BST<T> & Q)//copy constructor
+{
+     root=NULL;
+     copy(Q.root);
+}
+
+template <typename T>
+void BST<T>::copy(TreeNode<T>* n)//copy constructor helper function
+{
+     if(n!=NULL)
+     {
+         insert(n->value);
+         copy(n->left);
+         copy(n->right);
+     }
+}
+
+template <typename T>
+void BST<T>::chop(TreeNode<T> *n)//to help with assignment operator
+{
+     if(n)
+     {
+         chop(n->left);
+         chop(n->right);
+         delete n;
+     }
+}
+
+template <typename T>
+const BST<T> & BST<T>::operator=(const BST<T> &Q)//assignment overloaded so that copy constructor will work
+{
+     if(this != &Q)
+     {
+          chop(root);
+          root=NULL;
+          copy(Q.root);
+     }
+     return *this;
+}
+
+template <typename T>
 bool BST<T>::isEmpty()
 {
 	return root==NULL;
@@ -83,7 +126,7 @@ int BST<T>::getSize() const
 }
 
 template <typename T>
-TreeNode<T>* BST<T>::getMax()
+TreeNode<T>* BST<T>::getMax()//returns maximum 
 {
 	TreeNode<T>* current = root;
 	if (root==NULL)
@@ -100,7 +143,7 @@ TreeNode<T>* BST<T>::getMax()
 }
 
 template <typename T>
-TreeNode<T>* BST<T>::getMin()
+TreeNode<T>* BST<T>::getMin()//returns minimum
 {
 	TreeNode<T>* current = root;
 	if (root==NULL)
@@ -115,7 +158,7 @@ TreeNode<T>* BST<T>::getMin()
 }
 
 template <typename T>
-T BST<T>::getNode(T someValue)
+T BST<T>::getNode(T someValue)//to retrieve a particular node given the data
 {
 	if (root==NULL)
 	{
@@ -156,7 +199,7 @@ TreeNode<T>* BST<T>::getRandomNode(TreeNode<T>* someNode)//pass in root
 }
 
 template <typename T>
-TreeNode<T>* BST<T>::getRandomNode(int random, TreeNode<T>* temp, int count)
+TreeNode<T>* BST<T>::getRandomNode(int random, TreeNode<T>* temp, int count)//to get a random node from the tree
 {	
 	if(temp!=NULL&&count!=random)
 	{
@@ -175,7 +218,7 @@ TreeNode<T>* BST<T>::getRandomNode(int random, TreeNode<T>* temp, int count)
 }
 
 template <typename T>
-void BST<T>::insertDataAtNode(T newData, T oldLocation)
+void BST<T>::insertDataAtNode(T newData, T oldLocation)//to put new data at a particular node
 {
 	if (root==NULL)
 	{
@@ -247,7 +290,7 @@ void BST<T>::insert(T theValue)//like a failed search. Could also make recursive
 }
 
 template <typename T>
-bool BST<T>::contains(T someValue)
+bool BST<T>::contains(T someValue)//checks for existence of a value
 {		
 	if (root==NULL)
 	{
@@ -278,7 +321,7 @@ bool BST<T>::contains(T someValue)
 }
 
 template <typename T>
-void BST<T>::printInOrder(TreeNode<T>* n)
+void BST<T>::printInOrder(TreeNode<T>* n)//prints in order
 {
 	if (n!=NULL)
 	{
@@ -289,7 +332,7 @@ void BST<T>::printInOrder(TreeNode<T>* n)
 }
 
 template <typename T>
-void BST<T>::writePreOrder(TreeNode<T>* n)
+void BST<T>::writePreOrder(TreeNode<T>* n)//writes in preorder so that we can save data
 {
 	if(n!=NULL)
 	{
@@ -438,7 +481,7 @@ bool BST<T>::deleteNode(TreeNode<T> someNode)//could return something else
 }
 
 
-//creates a string version of the database that can be saved or user to rebuild the tree
+//creates a string version of the database that can be saved or used to rebuild the tree
 template <typename T>
 void BST<T>::makeSerializedString(TreeNode<T> *node, ostringstream& serialStream)
 {
@@ -449,13 +492,13 @@ void BST<T>::makeSerializedString(TreeNode<T> *node, ostringstream& serialStream
     }
         
         makeSerializedString(node->left, serialStream);
-        serialStream << node->value.ToString();
+        serialStream << node->value.ToString()<<'\n';
         makeSerializedString(node->right, serialStream);
 }
     
-    //writes tree to file
+    
 template <typename T>
-void BST<T>::serialize()
+void BST<T>::serialize()//writes tree to file
 {
     ofstream outFile; 
     outFile.open(fileName.c_str());
@@ -465,9 +508,9 @@ void BST<T>::serialize()
     outFile.close();
 }
     
-    //reads tree from file
+   
 template <typename T>
-void BST<T>::deserialize()
+void BST<T>::deserialize() //reads tree from file
 {
         delete root;
         root = NULL;
@@ -483,24 +526,5 @@ void BST<T>::deserialize()
         inFile.close();
 }
     
-template <typename T>
-void BST<T>::write(const std::string& file_name, TreeNode<T> data) // Writes the given BST data to the given file name.
-{
-	ofstream out;
-	out.open(file_name.c_str(),ios::out|ios::binary);
-	out.seekp(SEEK_END);
-	out.write(reinterpret_cast<char*>(&data), sizeof(data));
-	out.close();
-}
-template <typename T>
-void BST<T>::read(const std::string& file_name, TreeNode<T> data) // Reads the given file and assigns the data to the given BST.
-{
-	ifstream in;
-	in.open(file_name.c_str(),ios::in|ios::binary);
-	in.read(reinterpret_cast<char*>(&data), sizeof(data));
-	if(!in)
-	{
-		cout<<"Read this much: "<<in.gcount()<<endl;
-	}
-	in.close();
-}
+
+    
